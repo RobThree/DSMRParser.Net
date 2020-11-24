@@ -1,4 +1,4 @@
-# ![Logo](https://raw.githubusercontent.com/RobThree/DSMR.Net/main/DSMRParser/dsmr_logo.png) DSMR.Net
+# <img src="https://raw.githubusercontent.com/RobThree/DSMR.Net/main/DSMRParser/dsmr_logo.png" alt="Logo" width="64" height="64"> DSMR.Net
 DSMR Parser for .Net
 
 ## Usage
