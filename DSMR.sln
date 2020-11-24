@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30717.126
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DSMRParser", "DSMRParser\DSMRParser.csproj", "{B5FE1A18-E6DC-460A-9020-032CCD3DEE53}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DSMRParser.Tests", "DSMRParser.Tests\DSMRParser.Tests.csproj", "{ED13659B-72B6-4098-9424-294E6B020672}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B5FE1A18-E6DC-460A-9020-032CCD3DEE53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5FE1A18-E6DC-460A-9020-032CCD3DEE53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5FE1A18-E6DC-460A-9020-032CCD3DEE53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5FE1A18-E6DC-460A-9020-032CCD3DEE53}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED13659B-72B6-4098-9424-294E6B020672}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED13659B-72B6-4098-9424-294E6B020672}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED13659B-72B6-4098-9424-294E6B020672}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED13659B-72B6-4098-9424-294E6B020672}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {790FCB49-D630-49B0-BF58-AD6309E949EA}
+	EndGlobalSection
+EndGlobal
