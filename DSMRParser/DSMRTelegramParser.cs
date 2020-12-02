@@ -8,55 +8,119 @@ using System.Text;
 
 namespace DSMRParser
 {
+    /// <summary>
+    /// The <see cref="DSMRTelegramParser"/> can be used to parse DSM Telegrams in raw byte form or in ASCII string form
+    /// into <see cref="Telegram"/> objects
+    /// </summary>
+    /// <remarks>
+    /// More information can be found here: https://www.netbeheernederland.nl/_upload/Files/Slimme_meter_15_a727fce1f1.pdf
+    /// </remarks>
     public class DSMRTelegramParser : IDSMRTelegramParser
     {
-        // https://www.netbeheernederland.nl/_upload/Files/Slimme_meter_15_a727fce1f1.pdf
-
         private readonly ICRCCalculator _crc;
 
+        /// <summary>
+        /// Initializes a new instance of a <see cref="DSMRTelegramParser"/> with a default <see cref="ICRCCalculator"/>.
+        /// </summary>
         public DSMRTelegramParser()
             : this(ICRCCalculator.Default) { }
 
-        public DSMRTelegramParser(ICRCCalculator crc) => _crc = crc ?? throw new ArgumentNullException(nameof(crc));
+        /// <summary>
+        /// Initializes a new instance of a <see cref="DSMRTelegramParser"/> with a given <see cref="ICRCCalculator"/>.
+        /// </summary>
+        /// <exception cref="ArgumentNullException"/>Thrown when the <param name="crcCalculator"/> is null.
+        public DSMRTelegramParser(ICRCCalculator crcCalculator) => _crc = crcCalculator ?? throw new ArgumentNullException(nameof(crcCalculator));
 
-        public Telegram Parse(string data) => Parse(Encoding.ASCII.GetBytes(data));
-
-        public Telegram Parse(Span<byte> data)
+        /// <summary>
+        /// Parses a DSMR telegram in raw byte form into a <see cref="Telegram"/>.
+        /// </summary>
+        /// <param name="telegram">The DSMR telegram in raw byte form.</param>
+        /// <returns>A <see cref="Telegram"/> that represents the given <paramref name="telegram"/>.</returns>
+        /// <exception cref="TelegramFormatException">Thrown when the given <paramref name="telegram"/> is in an invalid format.</exception>
+        /// <exception cref="NullReferenceException">Thrown when the parsed <see cref="Telegram"/> resulted in a null value.</exception>
+        public Telegram Parse(Span<byte> telegram)
         {
-            var ex = TryParseCore(data, out var result);
+            var ex = TryParseCore(telegram, out var result);
             if (ex != null)
                 throw ex;
             return result ?? throw new NullReferenceException($"{nameof(TryParseCore)} returned null");
         }
 
-        public bool TryParse(string data, [NotNullWhen(true)] out Telegram? result) => TryParse(Encoding.ASCII.GetBytes(data), out result);
+        /// <summary>
+        /// Parses a DSMR telegram in ASCII string form into a <see cref="Telegram"/>.
+        /// </summary>
+        /// <param name="telegram">The DSMR telegram in ASCII string form.</param>
+        /// <returns>A <see cref="Telegram"/> that represents the given <paramref name="telegram"/>.</returns>
+        /// <exception cref="TelegramFormatException">Thrown when the given <paramref name="telegram"/> is in an invalid format.</exception>
+        /// <exception cref="NullReferenceException">Thrown when the parsed <see cref="Telegram"/> resulted in a null value.</exception>
+        public Telegram Parse(string telegram) => Parse(Encoding.ASCII.GetBytes(telegram));
 
-        public bool TryParse(Span<byte> data, [NotNullWhen(true)] out Telegram? result) => TryParseCore(data, out result) == null;
+        /// <summary>
+        /// Attempts to parse a DSMR telegram in raw byte form into a <see cref="Telegram"/>.
+        /// </summary>
+        /// <param name="telegram">The DSMR telegram in raw byte form.</param>
+        /// <param name="result">
+        /// A <see cref="Telegram"/> that represents the given <paramref name="telegram"/>. If the method returns true,
+        /// <paramref name="result"/> contains a valid <see cref="Telegram"/> or null when the method returns false.
+        /// </param>
+        /// <returns>True if the parse operation was successful; otherwise, false.</returns>
+        public bool TryParse(Span<byte> telegram, [NotNullWhen(true)] out Telegram? result) => TryParseCore(telegram, out result) == null;
 
-        private Exception? TryParseCore(Span<byte> data, [NotNullWhen(true)] out Telegram? result)
+        /// <summary>
+        /// Attempts to parse a DSMR telegram in ASCII string form into a <see cref="Telegram"/>.
+        /// </summary>
+        /// <param name="telegram">The DSMR telegram in ASCII string form.</param>
+        /// <param name="result">
+        /// A <see cref="Telegram"/> that represents the given <paramref name="telegram"/>. If the method returns true,
+        /// <paramref name="result"/> contains a valid <see cref="Telegram"/> or null when the method returns false.
+        /// </param>
+        /// <returns>True if the parse operation was successful; otherwise, false.</returns>
+        public bool TryParse(string telegram, [NotNullWhen(true)] out Telegram? result) => TryParse(Encoding.ASCII.GetBytes(telegram), out result);
+
+
+        /// <summary>
+        /// Attempts to parse a DSMR telegram in raw byte form into a <see cref="Telegram"/>.
+        /// </summary>
+        /// <param name="telegram">The DSMR telegram in raw byte form.</param>
+        /// <param name="result">
+        /// A <see cref="Telegram"/> that represents the given <paramref name="telegram"/>. If the method returns null,
+        /// <paramref name="result"/> contains a valid <see cref="Telegram"/> or null when the method returns an exception.
+        /// </param>
+        /// <returns>An exception indicating a reason for the failure to parse the telegram or null when successful.</returns>
+        private Exception? TryParseCore(Span<byte> telegram, [NotNullWhen(true)] out Telegram? result)
         {
+            // Initialize result
             result = null;
+        
             // Make sure data starts with identification ("/") and that the start of the CRC is at least 4 bytes before the end
-            if (data[0] == (byte)'/')
+            if (telegram[0] == (byte)'/')
             {
-                var lines = Encoding.ASCII.GetString(data).Split("\r\n");
+                // Get individual lines
+                var lines = Encoding.ASCII.GetString(telegram).Split("\r\n");
 
-                // TODO: Do CRC check only for V4/5
-                var crcex = _crc.Verify(data);
-                if (crcex != null)
-                    return crcex;
+                // TODO: we should do the CRC check -only- for V4/5/...
+                var crcex = _crc.Verify(telegram);
+                if (crcex != null)  // CRC failed?
+                    return crcex;   // Return exception froom CRCCalculator
 
+                
                 result = new Telegram(
-                                lines[0].TrimStart('/'),
-                                lines.Skip(2)
-                                    .Where(l => !string.IsNullOrEmpty(l) && char.IsDigit(l[0]))
-                                    .Select(l => (OBISId.FromString(l.Substring(0, Math.Max(0, l.IndexOf("(", StringComparison.Ordinal)))), GetValues(l)))
+                                lines[0].TrimStart('/'),    // Get identification (part after the "/" of the first line)
+                                lines.Skip(2)               // Skip identification and mandatory empty line
+                                    .Where(l => !string.IsNullOrEmpty(l) && char.IsDigit(l[0])) // Only process lines starting with a digit
+                                    .Select(l => (          // Parse values from telegram data
+                                        OBISId.FromString(l.Substring(0, Math.Max(0, l.IndexOf("(", StringComparison.Ordinal)))), GetValues(l)
+                                    ))
                 );
-                return null;
+                return null;    // No exceptions, all went well!
             }
-            return new FormatException("Invalid format");
+            // If we reache this point it must be an invalid format.
+            return new TelegramFormatException();
         }
 
+        /// <summary>
+        /// Extracts values like "(a)(b)(c)" and returns these as a string array.
+        /// </summary>
         private static IEnumerable<string?> GetValues(string value) => value[value.IndexOf("(", StringComparison.Ordinal)..].TrimStart('(').TrimEnd(')').Split(")(");
     }
 }

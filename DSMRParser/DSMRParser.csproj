@@ -15,6 +15,12 @@
     <PackageIcon>dsmr_logo.png</PackageIcon>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageReleaseNotes>Initial release</PackageReleaseNotes>
+    <Configurations>Debug;Release;ReleaseWithDocumentation</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseWithDocumentation|AnyCPU'">
+    <DocumentationFile>bin\ReleaseWithDocumentation\DSMRParser.xml</DocumentationFile>
+    <OutputPath></OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
