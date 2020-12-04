@@ -151,7 +151,7 @@ namespace DSMRParser
                                     ))
                 );
 
-                if (!ignoreCrc && result.DSMRVersion >= 4)
+                if (!ignoreCrc && result.DSMRVersion >= 40)
                 {
                     var crcex = _crc.Verify(telegram);
                     if (crcex != null)  // CRC failed?

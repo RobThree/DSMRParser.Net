@@ -59,7 +59,7 @@ namespace DSMRParser.Models
         /// <summary>Number of long power failures in any phase.</summary>
         public int? ElectricityLongFailures => ParseInt(OBISRegistry.ElectricityLongFailures);
         /// <summary>Power Failure Event Log.</summary>
-        public IEnumerable<TimeStampedValue<TimeSpan>> ElectricityFailureLog => ParseTimeStampedValues(OBISRegistry.ElectricityFailureLog, (d, v) => TimeSpan.FromSeconds(ParseIntUnit(d, v)?.Value ?? 0), 2);
+        public IEnumerable<TimeStampedValue<TimeSpan>> ElectricityFailureLog => ParseTimeStampedValues(OBISRegistry.ElectricityFailureLog, (d, v) => TimeSpan.FromSeconds(ParseLongUnit(d, v)?.Value ?? 0), 2);
         /// <summary>Number of voltage sags in phase L1.</summary>
         public int? ElectricitySagsL1 => ParseInt(OBISRegistry.ElectricitySagsL1);
         /// <summary>Number of voltage sags in phase L2.</summary>
@@ -205,11 +205,22 @@ namespace DSMRParser.Models
         /// </summary>
         /// <param name="value">The value.</param>
         /// <param name="result">
-        /// A <see cref="int"/> that represents the given <paramref name="value"/>. If the method returns true,
+        /// An <see cref="int"/> that represents the given <paramref name="value"/>. If the method returns true,
         /// <paramref name="result"/> contains a valid <see cref="int"/> or null when the method returns false.
         /// </param>
         /// <returns>True if the parse operation was successful; otherwise, false.</returns>
         protected static bool TryParseIntCore(string? value, out int result) => int.TryParse(value, NumberStyles.Integer, _culture, out result);
+
+        /// <summary>
+        /// Attempts to parse a long value.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="result">
+        /// A <see cref="long"/> that represents the given <paramref name="value"/>. If the method returns true,
+        /// <paramref name="result"/> contains a valid <see cref="long"/> or null when the method returns false.
+        /// </param>
+        /// <returns>True if the parse operation was successful; otherwise, false.</returns>
+        protected static bool TryParseLongCore(string? value, out long result) => long.TryParse(value, NumberStyles.Integer, _culture, out result);
 
         /// <summary>
         /// Attempts to parse a decimal value.
@@ -323,6 +334,55 @@ namespace DSMRParser.Models
             var (value, unit) = SplitValues(obisValue);
             if (TryParseIntCore(value, out var parsed) && IsCorrectUnit(descriptor.Unit, unit))
                 return new UnitValue<int>((int)(parsed * descriptor.Factor), descriptor.Unit);
+            return null;
+        }
+
+        /// <summary>
+        /// Parses the value from the given <see cref="OBISDescriptor"/> and returns the long value, corrected by and
+        /// optional factor given by the <see cref="OBISDescriptor"/> or null when the value fails to parse or doesn't exist.
+        /// </summary>
+        /// <param name="descriptor">
+        /// The <see cref="OBISDescriptor"/> specifying the value to find in the telegram and parse as <see cref="long"/>
+        /// </param>
+        /// <returns>
+        /// The, corrected by factor where applicable, long value of the value specified by the <see cref="OBISDescriptor"/> in
+        /// <paramref name="descriptor"/> or null when the value fails to parse or doesn't exist.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="descriptor"/> is null.</exception>
+        protected long? ParseLong(OBISDescriptor descriptor)
+        {
+            if (descriptor == null)
+                throw new ArgumentNullException(nameof(descriptor));
+            if (!TryParseLongCore(GetByDescriptor(descriptor), out var result))
+                return null;
+            return (long)(result * descriptor.Factor);
+        }
+
+        /// <summary>
+        /// Parses a long value with unit from a given <see cref="OBISDescriptor"/>.
+        /// </summary>
+        /// <param name="descriptor">
+        /// The <see cref="OBISDescriptor"/> specifying the value to find in the telegram and parse as <see cref="UnitValue{T}"/>
+        /// </param>
+        /// <returns>Returns a <see cref="UnitValue{T}"/> when parsing the given <paramref name="descriptor"/> succeeded, null otherwise.</returns>
+        protected UnitValue<long>? ParseLongUnit(OBISDescriptor descriptor) => ParseLongUnit(descriptor, GetByDescriptor(descriptor));
+        /// <summary>
+        /// Attempts to parse a given value with unit from a given <see cref="OBISDescriptor"/>.
+        /// </summary>
+        /// <param name="descriptor">
+        /// The <see cref="OBISDescriptor"/> specifying the value to find in the telegram and parse as <see cref="UnitValue{T}"/>
+        /// </param>
+        /// <param name="obisValue">The value (including any units) to parse.</param>
+        /// <returns>A <see cref="UnitValue{T}"/> representing the value parsed.</returns>
+        /// <remarks>This method assumes values are specified in "value*unit" format (i.e. "123*A").</remarks>
+        /// <exception cref="ArgumentNullException">Thrown when the given <paramref name="descriptor"/> is null.</exception>
+        protected static UnitValue<long>? ParseLongUnit(OBISDescriptor descriptor, string? obisValue)
+        {
+            if (descriptor == null)
+                throw new ArgumentNullException(nameof(descriptor));
+            var (value, unit) = SplitValues(obisValue);
+            if (TryParseLongCore(value, out var parsed) && IsCorrectUnit(descriptor.Unit, unit))
+                return new UnitValue<long>((long)(parsed * descriptor.Factor), descriptor.Unit);
             return null;
         }
 

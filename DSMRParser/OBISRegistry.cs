@@ -108,7 +108,7 @@ namespace DSMRParser
         /// <summary>Slave valve position.</summary>
         public static readonly OBISDescriptor SlaveValvePosition = new OBISDescriptor { Id = new OBISId(0, SLAVE_MBUS_ID, 24, 4, 0), Description = "Slave valve position" };
         /// <summary>Slave delivered value.</summary>
-        public static readonly OBISDescriptor SlaveDelivered = new OBISDescriptor { Id = new OBISId(0, SLAVE_MBUS_ID, 24, 2, 1), Description = "Slave delivered", Unit = OBISUnit.m3 };
+        public static readonly OBISDescriptor SlaveDelivered = new OBISDescriptor { Id = new OBISId(0, SLAVE_MBUS_ID, 24, 2, 1), Description = "Slave delivered", Unit = OBISUnit.kWh };
 
         private const int GAS_MBUS_ID = 1;
         private const int WATER_MBUS_ID = 2;
