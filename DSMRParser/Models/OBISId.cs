@@ -102,10 +102,10 @@ namespace DSMRParser.Models
         }
 
         /// <summary>
-        /// 
+        /// Creates an OBISId from a string
         /// </summary>
-        /// <param name="id"></param>
-        public static explicit operator OBISId(string id) => FromString(id);
+        /// <param name="id">The OBIS ID to create from.</param>
+        public static implicit operator OBISId(string id) => FromString(id);
 
         /// <summary>
         /// Splits a given string up into the byte-values of each of the parts.

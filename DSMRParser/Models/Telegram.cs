@@ -177,6 +177,20 @@ namespace DSMRParser.Models
         }
 
         /// <summary>
+        /// Gets a single value described by the given OBIS ID.
+        /// </summary>
+        /// <param name="obisId">The <see cref="OBISId"/> to find in the telegram.</param>
+        /// <returns>The value in 'raw string form' if found in the telegram or null otherwise.</returns>
+        public string? GetByObisID(OBISId obisId) => GetByDescriptor(obisId);
+
+        /// <summary>
+        /// Gets all values described by the given OBIS ID.
+        /// </summary>
+        /// <param name="obisId">The <see cref="OBISId"/> to find in the telegram.</param>
+        /// <returns>The values in 'raw string form' if found in the telegram or an empty enumerable otherwise.</returns>
+        public IEnumerable<string?> GetMultiByObisID(OBISId obisId) => GetMultiByDescriptor(obisId);
+
+        /// <summary>
         /// Attempts to parse a timestamp to a datetimeoffset.
         /// </summary>
         /// <param name="value">The value of the timestamp.</param>

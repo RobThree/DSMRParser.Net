@@ -76,5 +76,29 @@ namespace DSMRParser.Models
             result = null;
             return false;
         }
+
+        /// <summary>
+        /// Creates an OBISDescriptor from an <see cref="OBISId"/>.
+        /// </summary>
+        /// <param name="obisId">The OBIS ID to create from.</param>
+        /// <returns>The created <see cref="OBISDescriptor"/>.</returns>
+        public static OBISDescriptor FromOBISId(OBISId obisId) => CreateDescriptor(obisId);
+
+        /// <summary>
+        /// Creates an OBISDescriptor from an <see cref="OBISId"/>.
+        /// </summary>
+        /// <param name="obisId">The OBIS ID to create from.</param>
+        public static implicit operator OBISDescriptor(OBISId obisId) => FromOBISId(obisId);
+
+        /// <summary>
+        /// Creates and returns an descriptor for a given ObisID.
+        /// </summary>
+        /// <param name="obisId">The OBIS ID of the descriptor.</param>
+        /// <param name="description">The description of the value.</param>
+        /// <param name="factor">The the scaling factor of the the value.</param>
+        /// <param name="unit">Tthe <see cref="OBISUnit"/> of the value.</param>
+        /// <returns>The created <see cref="OBISDescriptor"/>.</returns>
+        public static OBISDescriptor CreateDescriptor(OBISId obisId, string description = "UNKNOWN", decimal factor = 1, OBISUnit unit = OBISUnit.NONE)
+            => new OBISDescriptor { Id = obisId, Description = description, Factor = factor, Unit = unit };
     }
 }
