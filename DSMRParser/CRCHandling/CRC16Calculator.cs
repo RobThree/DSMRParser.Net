@@ -48,6 +48,10 @@ namespace DSMRParser.CRCHandling
             var crcstart = rawTelegram.LastIndexOf((byte)'!') + 1;
             // Calculate the CRC
             var calculatedcrc = CalculateCRC(rawTelegram[0..crcstart]);
+
+            if (crcstart != rawTelegram.Length - 6)
+                return new CRCException("CRC must be 4 bytes");
+
             // Get the CRC claimed by the telegram
             var crcstring = Encoding.ASCII.GetString(rawTelegram[(crcstart)..(crcstart + 4)]);
             // Compare CRCs

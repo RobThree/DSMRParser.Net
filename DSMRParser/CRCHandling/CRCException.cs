@@ -69,7 +69,7 @@ namespace DSMRParser.CRCHandling
         /// The exception that is the cause of the current exception, or a null reference if no inner exception is specified.
         /// </param>
         public CRCException(string? message, int calculated, int claimed, Exception? innerException = null)
-            : base(message ?? $"CRC mismatch; expected '{calculated:X4}', found '{claimed}'", innerException)
+            : base(message ?? $"CRC mismatch; expected '{calculated:X4}', found '{claimed:X4}'", innerException)
         {
             Calculated = calculated;
             Claimed = claimed;
