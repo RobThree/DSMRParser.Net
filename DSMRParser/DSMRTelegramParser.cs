@@ -17,20 +17,20 @@ namespace DSMRParser
     /// </remarks>
     public class DSMRTelegramParser : IDSMRTelegramParser
     {
-        private readonly ICRCCalculator _crc;
+        private readonly ICRCVerifier _crc;
         private const bool DEFAULTIGNORECRC = false;
 
         /// <summary>
-        /// Initializes a new instance of a <see cref="DSMRTelegramParser"/> with a default <see cref="ICRCCalculator"/>.
+        /// Initializes a new instance of a <see cref="DSMRTelegramParser"/> with a default <see cref="ICRCVerifier"/>.
         /// </summary>
         public DSMRTelegramParser()
-            : this(ICRCCalculator.Default) { }
+            : this(ICRCVerifier.Default) { }
 
         /// <summary>
-        /// Initializes a new instance of a <see cref="DSMRTelegramParser"/> with a given <see cref="ICRCCalculator"/>.
+        /// Initializes a new instance of a <see cref="DSMRTelegramParser"/> with a given <see cref="ICRCVerifier"/>.
         /// </summary>
-        /// <exception cref="ArgumentNullException"/>Thrown when the <param name="crcCalculator"/> is null.
-        public DSMRTelegramParser(ICRCCalculator crcCalculator) => _crc = crcCalculator ?? throw new ArgumentNullException(nameof(crcCalculator));
+        /// <exception cref="ArgumentNullException"/>Thrown when the <param name="crcVerifier"/> is null.
+        public DSMRTelegramParser(ICRCVerifier crcVerifier) => _crc = crcVerifier ?? throw new ArgumentNullException(nameof(crcVerifier));
 
         /// <summary>
         /// Parses a DSMR telegram in raw byte form into a <see cref="Telegram"/>.
@@ -140,23 +140,24 @@ namespace DSMRParser
             if (telegram[0] == (byte)'/')
             {
                 // Get individual lines
-                var lines = Encoding.ASCII.GetString(telegram).Split("\r\n");
+                var lines = Encoding.ASCII.GetString(telegram).Split("\r\n", StringSplitOptions.RemoveEmptyEntries);
+
+                // Do we have a CRC, then check it!
+                if (!ignoreCrc && lines[^1][0] == '!' && lines[^1].Length > 1)
+                {
+                    var crcex = _crc.Verify(telegram);
+                    if (crcex != null)  // CRC failed?
+                        return crcex;   // Return exception from CRCVerifier
+                }
 
                 result = new Telegram(
                                 lines[0].TrimStart('/'),    // Get identification (part after the "/" of the first line)
-                                lines.Skip(2)               // Skip identification and mandatory empty line
+                                lines.Skip(1)               // Skip identification (mandatory empty line has already been removed by Split method)
                                     .Where(l => !string.IsNullOrEmpty(l) && char.IsDigit(l[0])) // Only process lines starting with a digit
                                     .Select(l => (          // Parse values from telegram data
                                         OBISId.FromString(l.Substring(0, Math.Max(0, l.IndexOf("(", StringComparison.Ordinal)))), GetValues(l)
                                     ))
                 );
-
-                if (!ignoreCrc && result.DSMRVersion >= 40)
-                {
-                    var crcex = _crc.Verify(telegram);
-                    if (crcex != null)  // CRC failed?
-                        return crcex;   // Return exception froom CRCCalculator
-                }
 
                 return null;    // No exceptions, all went well!
             }

@@ -5,7 +5,7 @@ namespace DSMRParser.CRCHandling
     /// <summary>
     /// Provides the base interface for CRC calculation
     /// </summary>
-    public interface ICRCCalculator
+    public interface ICRCVerifier
     {
         /// <summary>
         /// Extracts the CRC of the given Telegram data and verifies it against the calculated CRC.
@@ -22,8 +22,8 @@ namespace DSMRParser.CRCHandling
         ushort CalculateCRC(Span<byte> rawTelegram);
 
         /// <summary>
-        /// Returns the default CRC calculator.
+        /// Returns the default CRC verifier.
         /// </summary>
-        static ICRCCalculator Default => new CRC16Calculator();
+        static ICRCVerifier Default => new CRC16Verifier();
     }
 }

@@ -33,13 +33,5 @@ namespace DSMRParser.Tests
             Assert.AreEqual(1, result.Values.Count);
             Assert.AreEqual("ThisLineIsNotIgnored", result.GetByObisID("0-1:2.3"));
         }
-
-        [TestMethod]
-        public void DSMRTelegramParser_Ignores_CRC_For_Unknown_Versions()
-        {
-            var target = new DSMRTelegramParser();
-            var result = target.Parse("/Foo\r\n\r\n0-1:2.3(Test)\r\n!ABCD");
-            Assert.AreEqual("Test", result.GetByObisID("0-1:2.3"));
-        }
     }
 }

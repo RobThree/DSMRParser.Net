@@ -477,15 +477,15 @@ namespace DSMRParser.Models
         /// <summary>
         /// Gets the string representation of this <see cref="Telegram"/>.
         /// </summary>
-        /// <param name="crcCalculator">
-        /// The <see cref="ICRCCalculator"/> to use when determining the CRC for the telegram. Defaults to <see cref="ICRCCalculator.Default"/>.
+        /// <param name="crcVerifier">
+        /// The <see cref="ICRCVerifier"/> to use when determining the CRC for the telegram. Defaults to <see cref="ICRCVerifier.Default"/>.
         /// </param>
         /// <returns>The string representation of this <see cref="Telegram"/>.</returns>
-        public string AsString(ICRCCalculator? crcCalculator = null)
+        public string AsString(ICRCVerifier? crcVerifier = null)
         {
             var values = string.Join("\r\n", Values.Select(kv => $"{kv.Key}({string.Join(")(", kv.Value)})"));
             var telegram = $"/{Identification}\r\n\r\n{values}\r\n!";
-            var crc = (crcCalculator ?? ICRCCalculator.Default).CalculateCRC(Encoding.ASCII.GetBytes(telegram));
+            var crc = (crcVerifier ?? ICRCVerifier.Default).CalculateCRC(Encoding.ASCII.GetBytes(telegram));
             return $"{telegram}{crc:X4}\r\n";
         }
     }

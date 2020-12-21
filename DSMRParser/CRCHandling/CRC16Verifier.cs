@@ -8,7 +8,7 @@ namespace DSMRParser.CRCHandling
     /// Implements a CRC-16-IBM CRC.
     /// </summary>
     /// <remarks>See https://en.wikipedia.org/wiki/Cyclic_redundancy_check</remarks>
-    public class CRC16Calculator : ICRCCalculator
+    public class CRC16Verifier : ICRCVerifier
     {
         /// <summary>
         /// Internal lookup table
@@ -16,10 +16,10 @@ namespace DSMRParser.CRCHandling
         private readonly ushort[] _lookup = new ushort[256];
 
         /// <summary>
-        /// Initializes a new instance of a <see cref="CRC16Calculator" /> with the given polynomial (defaults to a reversed polynomial 0XA001).
+        /// Initializes a new instance of a <see cref="CRC16Verifier" /> with the given polynomial (defaults to a reversed polynomial 0XA001).
         /// </summary>
         /// <param name="polynomial">The polynomial this </param>
-        public CRC16Calculator(ushort polynomial = 0xA001)
+        public CRC16Verifier(ushort polynomial = 0xA001)
         {
             ushort value;
             ushort temp;
