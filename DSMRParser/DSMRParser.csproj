@@ -14,11 +14,12 @@
     <PackageTags>DSMR P1 p1meter dutch IEC62056-21 IEC 62056-61 obis telegram netbeheer nederland</PackageTags>
     <PackageIcon>dsmr_logo.png</PackageIcon>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageReleaseNotes>Initial release</PackageReleaseNotes>
+    <PackageReleaseNotes>Fixed parsing of ElectricityFailureLog timespan values. Fixed when CRC check is performed. Fixed SlaveDelivered unit from m³ to kWh.</PackageReleaseNotes>
     <Configurations>Debug;Release;ReleaseWithDocumentation</Configurations>
     <RepositoryUrl>https://github.com/RobThree/DSMR.Net</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageProjectUrl>https://github.com/RobThree/DSMR.Net</PackageProjectUrl>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseWithDocumentation|AnyCPU'">
