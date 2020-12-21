@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using DSMRParser.Models;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace DSMRParser.Tests
 {
@@ -31,6 +32,14 @@ namespace DSMRParser.Tests
             var result = target.Parse("/Foo\r\nThisLineIsIgnored\r\nSoIsThisOne\r\n0.1.2.3(ThisLineIsNotIgnored)");
             Assert.AreEqual(1, result.Values.Count);
             Assert.AreEqual("ThisLineIsNotIgnored", result.GetByObisID("0-1:2.3"));
+        }
+
+        [TestMethod]
+        public void DSMRTelegramParser_Ignores_CRC_For_Unknown_Versions()
+        {
+            var target = new DSMRTelegramParser();
+            var result = target.Parse("/Foo\r\n\r\n0-1:2.3(Test)\r\n!ABCD");
+            Assert.AreEqual("Test", result.GetByObisID("0-1:2.3"));
         }
     }
 }

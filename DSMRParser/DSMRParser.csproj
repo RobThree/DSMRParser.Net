@@ -16,6 +16,9 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageReleaseNotes>Initial release</PackageReleaseNotes>
     <Configurations>Debug;Release;ReleaseWithDocumentation</Configurations>
+    <RepositoryUrl>https://github.com/RobThree/DSMR.Net</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://github.com/RobThree/DSMR.Net</PackageProjectUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseWithDocumentation|AnyCPU'">
