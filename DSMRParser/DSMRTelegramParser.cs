@@ -148,7 +148,7 @@ public class DSMRTelegramParser : IDSMRTelegramParser
         result = null;
 
         // Make sure data starts with identification ("/") and that the start of the CRC is at least 4 bytes before the end
-        if (telegram[0] == (byte)'/')
+        if (telegram.Length > 0 && telegram[0] == (byte)'/')
         {
             // Get individual lines
             var lines = Encoding.ASCII.GetString(telegram).Split(LINESEPARATOR, StringSplitOptions.RemoveEmptyEntries);

@@ -32,4 +32,12 @@ public class ExtendedTelegramParserTests
         Assert.AreEqual(1, result.Values.Count);
         Assert.AreEqual("ThisLineIsNotIgnored", result.GetByObisID("0-1:2.3"));
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(TelegramFormatException))]
+    public void DSMRTelegramParser_ThrowsOnEmptyTelegram()
+    {
+        var target = new DSMRTelegramParser();
+        target.Parse(string.Empty);
+    }
 }
