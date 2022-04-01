@@ -108,8 +108,12 @@ public class Telegram
     public int? GasValvePosition => ParseInt(OBISRegistry.GasValvePosition);
     /// <summary>Gas delivered.</summary>
     public TimeStampedValue<UnitValue<decimal>>? GasDelivered =>
-        //TODO: Check unit/factor
         ParseTimeStampedValues(OBISRegistry.GasDelivered, (d, v) => ParseDecimalUnit(d, v)).FirstOrDefault();
+
+    /// <summary>Gas delivered - OLD (pre-V4).</summary>
+    public TimeStampedValue<UnitValue<decimal>>? GasDeliveredOld =>
+        ParseTimeStampedValues(OBISRegistry.GasDeliveredOld, (d, v) => ParseDecimalUnit(d, v)).FirstOrDefault();
+
     /// <summary>Thermal devicetype.</summary>
     public int? ThermalDeviceType => ParseInt(OBISRegistry.ThermalDeviceType);
     /// <summary>Thermal equipment identifier.</summary>
@@ -171,7 +175,7 @@ public class Telegram
     /// <returns>The values in 'raw string form' if found in the telegram or an empty enumerable otherwise.</returns>
     public IEnumerable<string?> GetMultiByDescriptor(OBISDescriptor descriptor)
     {
-        if (descriptor == null)
+        if (descriptor is null)
         {
             throw new ArgumentNullException(nameof(descriptor));
         }
@@ -297,7 +301,7 @@ public class Telegram
     /// <exception cref="ArgumentNullException">Thrown when the given <paramref name="descriptor"/> is null.</exception>
     protected static UnitValue<decimal>? ParseDecimalUnit(OBISDescriptor descriptor, string? obisValue)
     {
-        if (descriptor == null)
+        if (descriptor is null)
         {
             throw new ArgumentNullException(nameof(descriptor));
         }
@@ -325,7 +329,7 @@ public class Telegram
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="descriptor"/> is null.</exception>
     protected int? ParseInt(OBISDescriptor descriptor)
     {
-        if (descriptor == null)
+        if (descriptor is null)
         {
             throw new ArgumentNullException(nameof(descriptor));
         }
@@ -358,7 +362,7 @@ public class Telegram
     /// <exception cref="ArgumentNullException">Thrown when the given <paramref name="descriptor"/> is null.</exception>
     protected static UnitValue<int>? ParseIntUnit(OBISDescriptor descriptor, string? obisValue)
     {
-        if (descriptor == null)
+        if (descriptor is null)
         {
             throw new ArgumentNullException(nameof(descriptor));
         }
@@ -386,7 +390,7 @@ public class Telegram
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="descriptor"/> is null.</exception>
     protected long? ParseLong(OBISDescriptor descriptor)
     {
-        if (descriptor == null)
+        if (descriptor is null)
         {
             throw new ArgumentNullException(nameof(descriptor));
         }
@@ -419,7 +423,7 @@ public class Telegram
     /// <exception cref="ArgumentNullException">Thrown when the given <paramref name="descriptor"/> is null.</exception>
     protected static UnitValue<long>? ParseLongUnit(OBISDescriptor descriptor, string? obisValue)
     {
-        if (descriptor == null)
+        if (descriptor is null)
         {
             throw new ArgumentNullException(nameof(descriptor));
         }
@@ -458,7 +462,7 @@ public class Telegram
     /// </remarks>
     protected IEnumerable<TimeStampedValue<T>> ParseTimeStampedValues<T>(OBISDescriptor descriptor, Func<OBISDescriptor, string?, T?> valueSelector, int skip = 0)
     {
-        if (valueSelector == null)
+        if (valueSelector is null)
         {
             throw new ArgumentNullException(nameof(valueSelector));
         }

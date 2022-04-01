@@ -51,7 +51,7 @@ public record OBISDescriptor
     /// <exception cref="KeyNotFoundException">Thrown when the given <see cref="OBISId"/> could not be found.</exception>
     public static OBISDescriptor? GetKnownDescriptor(OBISId id)
     {
-        if (id == null)
+        if (id is null)
         {
             throw new ArgumentNullException(nameof(id));
         }

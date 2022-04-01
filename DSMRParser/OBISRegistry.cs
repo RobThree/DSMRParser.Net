@@ -85,6 +85,8 @@ public static class OBISRegistry
     public static readonly OBISDescriptor GasValvePosition = new() { Id = new OBISId(0, GAS_MBUS_ID, 24, 4, 0), Description = "Gas valve position" };
     /// <summary>Gas delivered.</summary>
     public static readonly OBISDescriptor GasDelivered = new() { Id = new OBISId(0, GAS_MBUS_ID, 24, 2, 1), Description = "Gas delivered", Unit = OBISUnit.m3 };
+    /// <summary>Gas delivered for V2.2 messages.</summary>
+    public static readonly OBISDescriptor GasDeliveredOld = new() { Id = new OBISId(0, GAS_MBUS_ID, 24, 3, 0), Description = "Gas delivered", Unit = OBISUnit.m3 };
     /// <summary>Thermal devicetype.</summary>
     public static readonly OBISDescriptor ThermalDeviceType = new() { Id = new OBISId(0, THERMAL_MBUS_ID, 24, 1, 0), Description = "Thermal device type" };
     /// <summary>Thermal equipment identifier.</summary>

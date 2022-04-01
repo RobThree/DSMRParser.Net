@@ -39,6 +39,21 @@ public class TelegramParserTests
     }
 
     [TestMethod]
+    public void DSMRTelegramParser_Reads_V2_2_Mangled_Telegrams()
+    {
+        var target = new DSMRTelegramParser(true);
+        var telegram = target.Parse(File.ReadAllBytes(@"testdata\v2_2_mangled.txt"));
+
+        Assert.AreEqual(@"Test\V2_2-Telegram_Mangled", telegram.Identification);
+
+        Assert.AreEqual(999m, telegram.ElectricityThreshold!.Value);
+        Assert.AreEqual(OBISUnit.kW, telegram.ElectricityThreshold!.Unit);
+
+        Assert.AreEqual(22806.137m, telegram.GasDeliveredOld!.Value!.Value);
+        Assert.AreEqual(OBISUnit.m3, telegram.GasDeliveredOld!.Value!.Unit);
+    }
+
+    [TestMethod]
     public void DSMRTelegramParser_Reads_V3_Telegrams()
     {
         var target = new DSMRTelegramParser();
