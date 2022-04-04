@@ -11,8 +11,13 @@ public interface ICRCVerifier
     /// Extracts the CRC of the given Telegram data and verifies it against the calculated CRC.
     /// </summary>
     /// <param name="rawTelegram">The Telegram in raw byte form.</param>
-    /// <returns>Returns a <see cref="CRCException"/> when the CRC doesn't match, null otherwise.</returns>
-    Exception? Verify(Span<byte> rawTelegram);
+    /// <param name="exception">
+    /// When this method returns, contains the <see cref="CRCException"/> containing information on why the CRC failed,
+    /// if the CRC failed, or null if the CRC is correct. This parameter is passed uninitialized; any value originally
+    /// supplied in result will be overwritten.
+    /// </param>
+    /// <returns>true if value was converted successfully, false otherwise.</returns>
+    bool TryVerify(Span<byte> rawTelegram, out CRCException? exception);
 
     /// <summary>
     /// Calculates the CRC of the given Telegram data.

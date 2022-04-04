@@ -41,17 +41,24 @@ public class CRC16Verifier : ICRCVerifier
     /// Extracts the CRC-16-IBM of the given Telegram data and verifies it against the calculated CRC-16-IBM.
     /// </summary>
     /// <param name="rawTelegram">The Telegram in raw byte form.</param>
-    /// <returns>Returns a <see cref="CRCException"/> when the CRC-16-IBM doesn't match, null otherwise.</returns>
-    public Exception? Verify(Span<byte> rawTelegram)
+    /// <param name="exception">
+    /// When this method returns, contains the <see cref="CRCException"/> containing information on why the CRC failed,
+    /// if the CRC failed, or null if the CRC is correct. This parameter is passed uninitialized; any value originally
+    /// supplied in result will be overwritten.
+    /// </param>
+    /// <returns>true if value was converted successfully, false otherwise.</returns>
+    public bool TryVerify(Span<byte> rawTelegram, out CRCException? exception)
     {
         // Find where the CRC starts
         var crcstart = rawTelegram.LastIndexOf((byte)'!') + 1;
         // Calculate the CRC
         var calculatedcrc = CalculateCRC(rawTelegram[0..crcstart]);
 
+        exception = null;
         if (crcstart != rawTelegram.Length - 6)
         {
-            return new CRCException("CRC must be 4 bytes");
+            exception = new CRCException("CRC must be 4 bytes");
+            return false;
         }
 
         // Get the CRC claimed by the telegram
@@ -59,10 +66,11 @@ public class CRC16Verifier : ICRCVerifier
         // Compare CRCs
         if (int.TryParse(crcstring, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var claimedcrc) && claimedcrc == calculatedcrc)
         {
-            return null;
+            return true;
         }
 
-        return new CRCException(calculatedcrc, claimedcrc);
+        exception = new CRCException(calculatedcrc, claimedcrc);
+        return false;
     }
 
     /// <summary>

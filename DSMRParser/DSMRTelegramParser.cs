@@ -27,13 +27,16 @@ public class DSMRTelegramParser : IDSMRTelegramParser
     /// <summary>
     /// Initializes a new instance of a <see cref="DSMRTelegramParser"/> with a default <see cref="ICRCVerifier"/>.
     /// </summary>
+    /// <param name="fixMangledTelegrams">Wether to (try to) fix 'mangled' telegrams (telegrams that don't adhere to the spec)</param>
     public DSMRTelegramParser(bool fixMangledTelegrams = DEFAULTFIXMANGLED)
         : this(ICRCVerifier.Default, fixMangledTelegrams) { }
 
     /// <summary>
     /// Initializes a new instance of a <see cref="DSMRTelegramParser"/> with a given <see cref="ICRCVerifier"/>.
     /// </summary>
-    /// <exception cref="ArgumentNullException"/>Thrown when the <param name="crcVerifier"/> is null.
+    /// <param name="crcVerifier">The <see cref="ICRCVerifier"/> to use for verifying CRC's.</param>
+    /// <param name="fixMangledTelegrams">Wether to (try to) fix 'mangled' telegrams (telegrams that don't adhere to the spec)</param>
+    /// <exception cref="ArgumentNullException">Thrown when the <paramref name="crcVerifier"/> is null.</exception>
     public DSMRTelegramParser(ICRCVerifier crcVerifier, bool fixMangledTelegrams = DEFAULTFIXMANGLED)
     {
         _crc = crcVerifier ?? throw new ArgumentNullException(nameof(crcVerifier));
@@ -137,6 +140,7 @@ public class DSMRTelegramParser : IDSMRTelegramParser
     /// Attempts to parse a DSMR telegram in raw byte form into a <see cref="Telegram"/>.
     /// </summary>
     /// <param name="telegram">The DSMR telegram in raw byte form.</param>
+    /// <param name="ignoreCrc">Wether to ignore the CRC (if any)./</param>
     /// <param name="result">
     /// A <see cref="Telegram"/> that represents the given <paramref name="telegram"/>. If the method returns null,
     /// <paramref name="result"/> contains a valid <see cref="Telegram"/> or null when the method returns an exception.
@@ -156,8 +160,7 @@ public class DSMRTelegramParser : IDSMRTelegramParser
             // Do we have a CRC, then check it unless ignored specifically
             if (!ignoreCrc && lines[^1][0] == '!' && lines[^1].Length > 1)
             {
-                var crcex = _crc.Verify(telegram);
-                if (crcex is not null)  // CRC failed?
+                if (!_crc.TryVerify(telegram, out var crcex))  // CRC failed?
                 {
                     return crcex;   // Return exception from CRCVerifier
                 }

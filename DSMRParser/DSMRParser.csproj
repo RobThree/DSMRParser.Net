@@ -20,6 +20,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageProjectUrl>https://github.com/RobThree/DSMR.Net</PackageProjectUrl>
     <Version>1.0.3</Version>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseWithDocumentation|AnyCPU'">
