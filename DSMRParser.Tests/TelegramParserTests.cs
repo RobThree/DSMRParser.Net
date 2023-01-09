@@ -242,4 +242,58 @@ public class TelegramParserTests
         Assert.AreEqual(11223.322m, telegram.SlaveDelivered!.Value!.Value);
         Assert.AreEqual(OBISUnit.kWh, telegram.SlaveDelivered!.Value!.Unit);
     }
+
+    [TestMethod]
+    public void DSMRTelegramParser_Reads_V5_0_2_Flu_Telegrams()
+    {
+        var target = new DSMRTelegramParser();
+        var telegram = target.Parse(File.ReadAllBytes(@"testdata\v5_02_flu_ok.txt"));
+        Assert.AreEqual(@"FLU5\253770234_A", telegram.Identification);
+        Assert.AreEqual(50217, telegram.DSMRVersion);
+        Assert.AreEqual("K8EG004046395507", telegram.EquipmentId);
+        Assert.AreEqual(new DateTimeOffset(2023, 01, 8, 22, 29, 30, TimeSpan.FromHours(1)), telegram.TimeStamp);
+
+        Assert.AreEqual(3540.994m, telegram.EnergyDeliveredTariff1!.Value);
+        Assert.AreEqual(OBISUnit.kWh, telegram.EnergyDeliveredTariff1!.Unit);
+        Assert.AreEqual(4343.832m, telegram.EnergyDeliveredTariff2!.Value);
+        Assert.AreEqual(OBISUnit.kWh, telegram.EnergyDeliveredTariff2!.Unit);
+        Assert.AreEqual(447.900m, telegram.EnergyReturnedTariff1!.Value);
+        Assert.AreEqual(OBISUnit.kWh, telegram.EnergyReturnedTariff1!.Unit);
+        Assert.AreEqual(203.828m, telegram.EnergyReturnedTariff2!.Value);
+        Assert.AreEqual(OBISUnit.kWh, telegram.EnergyReturnedTariff2!.Unit);
+
+        Assert.AreEqual(2, telegram.ElectricityTariff);
+
+        // TODO: add Current average demand - Active energy import
+        // TODO: Maximum demand – Active energy import of the running month
+        // TODO: Maximum demand – Active energy import of the last 13 months
+
+        Assert.AreEqual(0.544m, telegram.PowerDelivered!.Value);
+        Assert.AreEqual(OBISUnit.kW, telegram.PowerDelivered!.Unit);
+        Assert.AreEqual(0.0m, telegram.PowerReturned!.Value);
+        Assert.AreEqual(OBISUnit.kW, telegram.PowerDelivered!.Unit);
+
+        Assert.AreEqual(0.544m, telegram.PowerDeliveredL1!.Value);
+        Assert.AreEqual(OBISUnit.kW, telegram.PowerDeliveredL1!.Unit);
+        Assert.AreEqual(0.0m, telegram.PowerReturnedL1!.Value);
+        Assert.AreEqual(OBISUnit.kW, telegram.PowerReturnedL1!.Unit);
+
+        Assert.AreEqual(231.5m, telegram.VoltageL1!.Value);
+        Assert.AreEqual(OBISUnit.V, telegram.VoltageL1!.Unit);
+
+        Assert.AreEqual(2.85m, telegram.CurrentL1!.Value);
+        Assert.AreEqual(OBISUnit.A, telegram.CurrentL1!.Unit);
+
+        // TODO: add breaker state
+        // TODO: add limiter threshold
+        // TODO: add Fuse supervision threshold
+
+        Assert.AreEqual(string.Empty, telegram.MessageLong);
+        Assert.AreEqual(3, telegram.GasDeviceType);
+        Assert.AreEqual("9999ABCD123456789", telegram.GasEquipmentId);
+        Assert.AreEqual(1, telegram.GasValvePosition);
+        Assert.AreEqual(new DateTimeOffset(2023, 01, 8, 22, 25, 01, TimeSpan.FromHours(1)), telegram.GasDelivered!.DateTime!.Value);
+        Assert.AreEqual(4856.664m, telegram.GasDelivered!.Value!.Value);
+        Assert.AreEqual(OBISUnit.m3, telegram.GasDelivered!.Value!.Unit);
+    }
 }

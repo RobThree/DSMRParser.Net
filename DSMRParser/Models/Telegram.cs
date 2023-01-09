@@ -31,7 +31,7 @@ public class Telegram
     /// <summary>Gets the identification of the DSMR meter the telegram originated from.</summary>
     public string? Identification { get; init; }
     /// <summary>Gets the version of the DSMR telegram.</summary>
-    public int? DSMRVersion => ParseInt(OBISRegistry.DSMRVersion);
+    public int? DSMRVersion => ParseInt(OBISRegistry.DSMRVersion) ?? ParseInt(BelgianOBISRegistry.DSMRVersion);
     /// <summary>Gets the timestamp of the DSMR telegram.</summary>
     public DateTimeOffset? TimeStamp => ParseTimeStamp(OBISRegistry.TimeStamp);
     /// <summary>Equipment identifier.</summary>
@@ -83,11 +83,11 @@ public class Telegram
     /// <summary>Instantaneous voltage L3.</summary>
     public UnitValue<decimal>? VoltageL3 => ParseDecimalUnit(OBISRegistry.VoltageL3);
     /// <summary>Instantaneous current L1.</summary>
-    public UnitValue<int>? CurrentL1 => ParseIntUnit(OBISRegistry.CurrentL1);
+    public UnitValue<decimal>? CurrentL1 => ParseDecimalUnit(OBISRegistry.CurrentL1);
     /// <summary>Instantaneous current L2.</summary>
-    public UnitValue<int>? CurrentL2 => ParseIntUnit(OBISRegistry.CurrentL2);
+    public UnitValue<decimal>? CurrentL2 => ParseDecimalUnit(OBISRegistry.CurrentL2);
     /// <summary>Instantaneous current L3.</summary>
-    public UnitValue<int>? CurrentL3 => ParseIntUnit(OBISRegistry.CurrentL3);
+    public UnitValue<decimal>? CurrentL3 => ParseDecimalUnit(OBISRegistry.CurrentL3);
     /// <summary>Instantaneous active power L1.</summary>
     public UnitValue<decimal>? PowerDeliveredL1 => ParseDecimalUnit(OBISRegistry.PowerDeliveredL1);
     /// <summary>Instantaneous active power L2.</summary>
@@ -103,12 +103,14 @@ public class Telegram
     /// <summary>Gas devicetype.</summary>
     public int? GasDeviceType => ParseInt(OBISRegistry.GasDeviceType);
     /// <summary>Gas equipment identifier.</summary>
-    public string? GasEquipmentId => DecodeString(GetByDescriptor(OBISRegistry.GasEquipmentId));
+    public string? GasEquipmentId => DecodeString(GetByDescriptor(OBISRegistry.GasEquipmentId)) ?? DecodeString(GetByDescriptor(BelgianOBISRegistry.GasEquipmentId));
     /// <summary>Gas valve position.</summary>
     public int? GasValvePosition => ParseInt(OBISRegistry.GasValvePosition);
+
     /// <summary>Gas delivered.</summary>
     public TimeStampedValue<UnitValue<decimal>>? GasDelivered =>
-        ParseTimeStampedValues(OBISRegistry.GasDelivered, (d, v) => ParseDecimalUnit(d, v)).FirstOrDefault();
+        ParseTimeStampedValues(OBISRegistry.GasDelivered, ParseDecimalUnit).FirstOrDefault() ??
+        ParseTimeStampedValues(BelgianOBISRegistry.GasDelivered, ParseDecimalUnit).FirstOrDefault();
 
     /// <summary>Gas delivered - OLD (pre-V4).</summary>
     public TimeStampedValue<UnitValue<decimal>>? GasDeliveredOld =>
