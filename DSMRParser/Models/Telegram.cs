@@ -26,7 +26,7 @@ public class Telegram(string? identification, IEnumerable<(OBISId obisid, IEnume
 {
     /// <summary>The culture used for parsing values (affecting parsing of values like "1.234,56" vs "1,234.56".</summary>
     private static readonly CultureInfo _culture = CultureInfo.InvariantCulture;
-    private static readonly TimeZoneInfo _dutchtimezone = TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");
+    private static readonly TimeZoneInfo _dutchtimezone = TimeZoneInfo.FindSystemTimeZoneById("W. Europe Standard Time");
 
     /// <summary>An empty dictionary of OBIS values.</summary>
     protected static readonly IReadOnlyDictionary<OBISId, IEnumerable<string?>> EMPTY = new ReadOnlyDictionary<OBISId, IEnumerable<string?>>(Array.Empty<OBISDescriptor>().ToDictionary(i => i.Id, i => Enumerable.Empty<string?>()));
