@@ -1,2 +1,1 @@
-# Denote all testfiles that should keep the line-endings as-is
-**/testdata/*.txt binary
+*.txt crlf
