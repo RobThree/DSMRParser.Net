@@ -8,21 +8,19 @@
 		<Authors>RobIII</Authors>
 		<Company>Devcorner.nl</Company>
 		<Product>DSMRParser.Net</Product>
-		<Copyright>Copyright ©2020 Devcorner.nl</Copyright>
+		<Copyright>Copyright ©2020 - 2024 Devcorner.nl</Copyright>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<Description>Parser for DSMR telegrams</Description>
-		<PackageTags>DSMR P1 p1meter dutch IEC62056-21 IEC 62056-61 obis telegram netbeheer nederland</PackageTags>
+		<PackageTags>DSMR;P1;p1meter;dutch;IEC62056-21;IEC 62056-61;obis;telegram;netbeheer nederland</PackageTags>
 		<PackageIcon>dsmr_logo.png</PackageIcon>
-		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<PackageReleaseNotes>Fixed parsing of ElectricityFailureLog timespan values. Fixed when CRC check is performed. Fixed SlaveDelivered unit from m³ to kWh.</PackageReleaseNotes>
 		<Configurations>Debug;Release;ReleaseWithDocumentation</Configurations>
 		<RepositoryUrl>https://github.com/RobThree/DSMR.Net</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageProjectUrl>https://github.com/RobThree/DSMR.Net</PackageProjectUrl>
-		<Version>1.0.3</Version>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 		<EnableNETAnalyzers>true</EnableNETAnalyzers>
 		<AnalysisLevel>latest</AnalysisLevel>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseWithDocumentation|AnyCPU'">
@@ -31,6 +29,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<None Include="..\README.md">
+		  <Pack>True</Pack>
+		  <PackagePath>\</PackagePath>
+		</None>
 		<None Include="dsmr_logo.png">
 			<Pack>True</Pack>
 			<PackagePath></PackagePath>
