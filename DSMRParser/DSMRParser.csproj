@@ -14,9 +14,9 @@
 		<PackageTags>DSMR;P1;p1meter;dutch;IEC62056-21;IEC 62056-61;obis;telegram;netbeheer nederland</PackageTags>
 		<PackageIcon>dsmr_logo.png</PackageIcon>
 		<Configurations>Debug;Release;ReleaseWithDocumentation</Configurations>
-		<RepositoryUrl>https://github.com/RobThree/DSMR.Net</RepositoryUrl>
+		<RepositoryUrl>https://github.com/RobThree/DSMRParser.Net</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
-		<PackageProjectUrl>https://github.com/RobThree/DSMR.Net</PackageProjectUrl>
+		<PackageProjectUrl>https://github.com/RobThree/DSMRParser.Net</PackageProjectUrl>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 		<EnableNETAnalyzers>true</EnableNETAnalyzers>
 		<AnalysisLevel>latest</AnalysisLevel>
