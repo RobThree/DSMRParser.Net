@@ -195,11 +195,12 @@ public class Telegram(string? identification, IEnumerable<(OBISId obisid, IEnume
     /// <returns>True if the parse operation was successful; otherwise, false.</returns>
     protected static bool TryParseDateTimeOffsetCore(string? value, out DateTimeOffset result)
     {
-        if (DateTimeOffset.TryParseExact(value?.TrimEnd('W', 'S'), "yyMMddHHmmss", _culture, DateTimeStyles.None, out result))
+        if (DateTime.TryParseExact(value?.TrimEnd('W', 'S'), "yyMMddHHmmss", _culture, DateTimeStyles.None, out var dt))
         {
-            result = TimeZoneInfo.ConvertTime(result, _dutchtimezone);
+            result = new DateTimeOffset(dt, _dutchtimezone.GetUtcOffset(dt));
             return true;
         }
+        result = default;
         return false;
     }
 
