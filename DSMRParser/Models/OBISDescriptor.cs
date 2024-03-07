@@ -49,15 +49,9 @@ public record OBISDescriptor
     /// <param name="id">An <see cref="OBISId"/> containing the OBIS ID to find the descriptor for.</param>
     /// <returns>An <see cref="OBISDescriptor"/> that represents the given <paramref name="id"/></returns>
     /// <exception cref="KeyNotFoundException">Thrown when the given <see cref="OBISId"/> could not be found.</exception>
-    public static OBISDescriptor? GetKnownDescriptor(OBISId id)
-    {
-        if (id is null)
-        {
-            throw new ArgumentNullException(nameof(id));
-        }
-
-        return TryGetKnownDescriptor(id, out var result) ? result : throw new KeyNotFoundException(id.ToString());
-    }
+    public static OBISDescriptor? GetKnownDescriptor(OBISId id) => id is null
+            ? throw new ArgumentNullException(nameof(id))
+            : TryGetKnownDescriptor(id, out var result) ? result : throw new KeyNotFoundException(id.ToString());
 
     /// <summary>
     /// Attempts to resolve a given <see cref="OBISId"/> to a known descriptor.

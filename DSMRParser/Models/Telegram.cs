@@ -12,14 +12,17 @@ namespace DSMRParser.Models;
 // Note: this is kind of a huge file but most of it is docblocks / documentation. There's mostly a big bulk of properties and some helper parsing methods in here.
 
 /// <summary>
-/// Represents a DSMR Telegram with the most common known values as properties.
+/// Intializes a new instance of a <see cref="Telegram"/> with the given identification and values representing
+/// the telegram.
 /// </summary>
 /// <remarks>
 /// This class uses a form of 'lazy parsing' meaning that values are only determined upon actual request; when a property
 /// is read the value is resolved in an internal list of values and the value is returned.
 /// </remarks>
+/// <param name="identification">The identification of the meter the telegram originated from.</param>
+/// <param name="values">The (OBIS) values reported by the meter.</param>
 [DebuggerDisplay("{Identification,nq}@{TimeStamp,nq}")]
-public class Telegram
+public class Telegram(string? identification, IEnumerable<(OBISId obisid, IEnumerable<string?> values)> values)
 {
     /// <summary>The culture used for parsing values (affecting parsing of values like "1.234,56" vs "1,234.56".</summary>
     private static readonly CultureInfo _culture = CultureInfo.InvariantCulture;
@@ -29,7 +32,7 @@ public class Telegram
 
     #region Properties
     /// <summary>Gets the identification of the DSMR meter the telegram originated from.</summary>
-    public string? Identification { get; init; }
+    public string? Identification { get; init; } = identification ?? throw new ArgumentNullException(nameof(identification));
     /// <summary>Gets the version of the DSMR telegram.</summary>
     public int? DSMRVersion => ParseInt(OBISRegistry.DSMRVersion);
     /// <summary>Gets the timestamp of the DSMR telegram.</summary>
@@ -108,11 +111,11 @@ public class Telegram
     public int? GasValvePosition => ParseInt(OBISRegistry.GasValvePosition);
     /// <summary>Gas delivered.</summary>
     public TimeStampedValue<UnitValue<decimal>>? GasDelivered =>
-        ParseTimeStampedValues(OBISRegistry.GasDelivered, (d, v) => ParseDecimalUnit(d, v)).FirstOrDefault();
+        ParseTimeStampedValues(OBISRegistry.GasDelivered, ParseDecimalUnit).FirstOrDefault();
 
     /// <summary>Gas delivered - OLD (pre-V4).</summary>
     public TimeStampedValue<UnitValue<decimal>>? GasDeliveredOld =>
-        ParseTimeStampedValues(OBISRegistry.GasDeliveredOld, (d, v) => ParseDecimalUnit(d, v)).FirstOrDefault();
+        ParseTimeStampedValues(OBISRegistry.GasDeliveredOld, ParseDecimalUnit).FirstOrDefault();
 
     /// <summary>Thermal devicetype.</summary>
     public int? ThermalDeviceType => ParseInt(OBISRegistry.ThermalDeviceType);
@@ -123,7 +126,7 @@ public class Telegram
     /// <summary>Thermal energy delivered.</summary>
     public TimeStampedValue<UnitValue<decimal>>? ThermalDelivered =>
         //TODO: Check unit/factor
-        ParseTimeStampedValues(OBISRegistry.ThermalDelivered, (d, v) => ParseDecimalUnit(d, v)).FirstOrDefault();
+        ParseTimeStampedValues(OBISRegistry.ThermalDelivered, ParseDecimalUnit).FirstOrDefault();
     /// <summary>Water devicetype.</summary>
     public int? WaterDeviceType => ParseInt(OBISRegistry.WaterDeviceType);
     /// <summary>Water equipment identifier.</summary>
@@ -133,7 +136,7 @@ public class Telegram
     /// <summary>Water delivered.</summary>
     public TimeStampedValue<UnitValue<decimal>>? WaterDelivered =>
         //TODO: Check unit/factor
-        ParseTimeStampedValues(OBISRegistry.WaterDelivered, (d, v) => ParseDecimalUnit(d, v)).FirstOrDefault();
+        ParseTimeStampedValues(OBISRegistry.WaterDelivered, ParseDecimalUnit).FirstOrDefault();
     /// <summary>Slave devicetype.</summary>
     public int? SlaveDeviceType => ParseInt(OBISRegistry.SlaveDeviceType);
     /// <summary>Slave equipment identifier.</summary>
@@ -143,23 +146,12 @@ public class Telegram
     /// <summary>Slave delivered value.</summary>
     public TimeStampedValue<UnitValue<decimal>>? SlaveDelivered =>
         //TODO: Check unit/factor
-        ParseTimeStampedValues(OBISRegistry.SlaveDelivered, (d, v) => ParseDecimalUnit(d, v)).FirstOrDefault();
+        ParseTimeStampedValues(OBISRegistry.SlaveDelivered, ParseDecimalUnit).FirstOrDefault();
 
     /// <summary>Gets all values reported by the DSMR meter.</summary>
-    public IReadOnlyDictionary<OBISId, IEnumerable<string?>> Values { get; init; } = EMPTY;
-    #endregion
+    public IReadOnlyDictionary<OBISId, IEnumerable<string?>> Values { get; init; } = new ReadOnlyDictionary<OBISId, IEnumerable<string?>>(values.ToDictionary(i => i.obisid, i => i.values));
 
-    /// <summary>
-    /// Intializes a new instance of a <see cref="Telegram"/> with the given identification and values representing
-    /// the telegram.
-    /// </summary>
-    /// <param name="identification">The identification of the meter the telegram originated from.</param>
-    /// <param name="values">The (OBIS) values reported by the meter.</param>
-    public Telegram(string? identification, IEnumerable<(OBISId obisid, IEnumerable<string?> values)> values)
-    {
-        Identification = identification ?? throw new ArgumentNullException(nameof(identification));
-        Values = new ReadOnlyDictionary<OBISId, IEnumerable<string?>>(values.ToDictionary(i => i.obisid, i => i.values));
-    }
+    #endregion
 
     /// <summary>
     /// Gets a single value described by the given descriptor.
@@ -173,15 +165,9 @@ public class Telegram
     /// </summary>
     /// <param name="descriptor">The <see cref="OBISDescriptor"/> describing the values to find in the telegram.</param>
     /// <returns>The values in 'raw string form' if found in the telegram or an empty enumerable otherwise.</returns>
-    public IEnumerable<string?> GetMultiByDescriptor(OBISDescriptor descriptor)
-    {
-        if (descriptor is null)
-        {
-            throw new ArgumentNullException(nameof(descriptor));
-        }
-
-        return Values.TryGetValue(descriptor.Id, out var value) ? value : Array.Empty<string?>();
-    }
+    public IEnumerable<string?> GetMultiByDescriptor(OBISDescriptor descriptor) => descriptor is null
+            ? throw new ArgumentNullException(nameof(descriptor))
+            : Values.TryGetValue(descriptor.Id, out var value) ? value : [];
 
     /// <summary>
     /// Gets a single value described by the given OBIS ID.
@@ -307,12 +293,9 @@ public class Telegram
         }
 
         var (value, unit) = SplitValues(obisValue);
-        if (TryParseDecimalCore(value, out var parsed) && IsCorrectUnit(descriptor.Unit, unit))
-        {
-            return new UnitValue<decimal>(parsed * descriptor.Factor, descriptor.Unit);
-        }
-
-        return null;
+        return TryParseDecimalCore(value, out var parsed) && IsCorrectUnit(descriptor.Unit, unit)
+            ? new UnitValue<decimal>(parsed * descriptor.Factor, descriptor.Unit)
+            : null;
     }
 
     /// <summary>
@@ -334,12 +317,7 @@ public class Telegram
             throw new ArgumentNullException(nameof(descriptor));
         }
 
-        if (!TryParseIntCore(GetByDescriptor(descriptor), out var result))
-        {
-            return null;
-        }
-
-        return (int)(result * descriptor.Factor);
+        return !TryParseIntCore(GetByDescriptor(descriptor), out var result) ? null : (int)(result * descriptor.Factor);
     }
 
     /// <summary>
@@ -368,12 +346,9 @@ public class Telegram
         }
 
         var (value, unit) = SplitValues(obisValue);
-        if (TryParseIntCore(value, out var parsed) && IsCorrectUnit(descriptor.Unit, unit))
-        {
-            return new UnitValue<int>((int)(parsed * descriptor.Factor), descriptor.Unit);
-        }
-
-        return null;
+        return TryParseIntCore(value, out var parsed) && IsCorrectUnit(descriptor.Unit, unit)
+            ? new UnitValue<int>((int)(parsed * descriptor.Factor), descriptor.Unit)
+            : null;
     }
 
     /// <summary>
@@ -395,12 +370,7 @@ public class Telegram
             throw new ArgumentNullException(nameof(descriptor));
         }
 
-        if (!TryParseLongCore(GetByDescriptor(descriptor), out var result))
-        {
-            return null;
-        }
-
-        return (long)(result * descriptor.Factor);
+        return !TryParseLongCore(GetByDescriptor(descriptor), out var result) ? null : (long)(result * descriptor.Factor);
     }
 
     /// <summary>
@@ -429,12 +399,9 @@ public class Telegram
         }
 
         var (value, unit) = SplitValues(obisValue);
-        if (TryParseLongCore(value, out var parsed) && IsCorrectUnit(descriptor.Unit, unit))
-        {
-            return new UnitValue<long>((long)(parsed * descriptor.Factor), descriptor.Unit);
-        }
-
-        return null;
+        return TryParseLongCore(value, out var parsed) && IsCorrectUnit(descriptor.Unit, unit)
+            ? new UnitValue<long>((long)(parsed * descriptor.Factor), descriptor.Unit)
+            : null;
     }
 
     /// <summary>
@@ -491,12 +458,7 @@ public class Telegram
         }
 
         var d = value.LastIndexOf(unitSeparator);
-        if (d >= 0)
-        {
-            return (value[0..d], value[(d + 1)..]);
-        }
-
-        return (value, null);
+        return d >= 0 ? ((string? value, string? unit))(value[0..d], value[(d + 1)..]) : ((string? value, string? unit))(value, null);
     }
 
     /// <summary>

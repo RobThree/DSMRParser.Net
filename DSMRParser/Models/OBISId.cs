@@ -12,7 +12,7 @@ namespace DSMRParser.Models;
 [DebuggerDisplay("{ToString()}")]
 public record OBISId
 {
-    private static readonly char[] SPLITCHARS = new char[] { '-', ':', '.' };
+    private static readonly char[] _splitchars = ['-', ':', '.'];
 
     /// <summary>
     /// A read-only instance of the <see cref="OBISId"/> structure whose value is all 255's.
@@ -123,16 +123,11 @@ public record OBISId
     {
         // Split on defined separators, return Max+1 parts so we can throw when too many parts are given, convert
         // each part to a 0..255 value.
-        foreach (var v in id.Split(SPLITCHARS, 7))
+        foreach (var v in id.Split(_splitchars, 7))
         {
-            if (byte.TryParse(v, NumberStyles.None, CultureInfo.InvariantCulture, out var result))
-            {
-                yield return result;
-            }
-            else
-            {
-                throw new InvalidOBISIdException($"Invalid value '{v}' in string '{id}'");
-            }
+            yield return byte.TryParse(v, NumberStyles.None, CultureInfo.InvariantCulture, out var result)
+                ? result
+                : throw new InvalidOBISIdException($"Invalid value '{v}' in string '{id}'");
         }
     }
 }
