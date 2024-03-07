@@ -26,6 +26,7 @@ public class Telegram(string? identification, IEnumerable<(OBISId obisid, IEnume
 {
     /// <summary>The culture used for parsing values (affecting parsing of values like "1.234,56" vs "1,234.56".</summary>
     private static readonly CultureInfo _culture = CultureInfo.InvariantCulture;
+    private static readonly TimeZoneInfo _dutchtimezone = TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");
 
     /// <summary>An empty dictionary of OBIS values.</summary>
     protected static readonly IReadOnlyDictionary<OBISId, IEnumerable<string?>> EMPTY = new ReadOnlyDictionary<OBISId, IEnumerable<string?>>(Array.Empty<OBISDescriptor>().ToDictionary(i => i.Id, i => Enumerable.Empty<string?>()));
@@ -192,9 +193,15 @@ public class Telegram(string? identification, IEnumerable<(OBISId obisid, IEnume
     /// <paramref name="result"/> contains a valid <see cref="DateTimeOffset"/> or null when the method returns false.
     /// </param>
     /// <returns>True if the parse operation was successful; otherwise, false.</returns>
-    protected static bool TryParseDateTimeOffsetCore(string? value, out DateTimeOffset result) =>
-        //TODO: Check if W/S (Winter/Summer 🤪) has any effect / needs to be corrected
-        DateTimeOffset.TryParseExact(value?.TrimEnd('W', 'S'), "yyMMddHHmmss", _culture, DateTimeStyles.AssumeLocal, out result);
+    protected static bool TryParseDateTimeOffsetCore(string? value, out DateTimeOffset result)
+    {
+        if (DateTimeOffset.TryParseExact(value?.TrimEnd('W', 'S'), "yyMMddHHmmss", _culture, DateTimeStyles.None, out result))
+        {
+            result = TimeZoneInfo.ConvertTime(result, _dutchtimezone);
+            return true;
+        }
+        return false;
+    }
 
     /// <summary>
     /// Attempts to parse a byte in hexadecimal format to a byte value.
@@ -310,15 +317,9 @@ public class Telegram(string? identification, IEnumerable<(OBISId obisid, IEnume
     /// <paramref name="descriptor"/> or null when the value fails to parse or doesn't exist.
     /// </returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="descriptor"/> is null.</exception>
-    protected int? ParseInt(OBISDescriptor descriptor)
-    {
-        if (descriptor is null)
-        {
-            throw new ArgumentNullException(nameof(descriptor));
-        }
-
-        return !TryParseIntCore(GetByDescriptor(descriptor), out var result) ? null : (int)(result * descriptor.Factor);
-    }
+    protected int? ParseInt(OBISDescriptor descriptor) => descriptor is null
+            ? throw new ArgumentNullException(nameof(descriptor))
+            : !TryParseIntCore(GetByDescriptor(descriptor), out var result) ? null : (int)(result * descriptor.Factor);
 
     /// <summary>
     /// Parses an integer value with unit from a given <see cref="OBISDescriptor"/>.
@@ -363,15 +364,9 @@ public class Telegram(string? identification, IEnumerable<(OBISId obisid, IEnume
     /// <paramref name="descriptor"/> or null when the value fails to parse or doesn't exist.
     /// </returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="descriptor"/> is null.</exception>
-    protected long? ParseLong(OBISDescriptor descriptor)
-    {
-        if (descriptor is null)
-        {
-            throw new ArgumentNullException(nameof(descriptor));
-        }
-
-        return !TryParseLongCore(GetByDescriptor(descriptor), out var result) ? null : (long)(result * descriptor.Factor);
-    }
+    protected long? ParseLong(OBISDescriptor descriptor) => descriptor is null
+            ? throw new ArgumentNullException(nameof(descriptor))
+            : !TryParseLongCore(GetByDescriptor(descriptor), out var result) ? null : (long)(result * descriptor.Factor);
 
     /// <summary>
     /// Parses a long value with unit from a given <see cref="OBISDescriptor"/>.
