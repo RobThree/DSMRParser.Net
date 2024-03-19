@@ -35,7 +35,7 @@ public class Telegram(string? identification, IEnumerable<(OBISId obisid, IEnume
     /// <summary>Gets the identification of the DSMR meter the telegram originated from.</summary>
     public string? Identification { get; init; } = identification ?? throw new ArgumentNullException(nameof(identification));
     /// <summary>Gets the version of the DSMR telegram.</summary>
-    public int? DSMRVersion => ParseInt(OBISRegistry.DSMRVersion);
+    public int? DSMRVersion => ParseInt(OBISRegistry.DSMRVersion) ?? ParseInt(BelgianOBISRegistry.DSMRVersion);
     /// <summary>Gets the timestamp of the DSMR telegram.</summary>
     public DateTimeOffset? TimeStamp => ParseTimeStamp(OBISRegistry.TimeStamp);
     /// <summary>Equipment identifier.</summary>
@@ -48,10 +48,14 @@ public class Telegram(string? identification, IEnumerable<(OBISId obisid, IEnume
     public UnitValue<decimal>? EnergyReturnedTariff1 => ParseDecimalUnit(OBISRegistry.EnergyReturnedTariff1);
     /// <summary>Electricity returned (Tariff 2).</summary>
     public UnitValue<decimal>? EnergyReturnedTariff2 => ParseDecimalUnit(OBISRegistry.EnergyReturnedTariff2);
+    /// <summary>Instantaneous energy delivered max running month.</summary>
+    public TimeStampedValue<UnitValue<decimal>>? EnergyDeliveredMaxRunningMonth => ParseTimeStampedValues(BelgianOBISRegistry.PowerDeliveredMaxRunningMonth, ParseDecimalUnit).FirstOrDefault();
     /// <summary>Tariff indicator electricity.</summary>
     public int? ElectricityTariff => ParseInt(OBISRegistry.ElectricityTariff);
     /// <summary>Actual electricity power delivered.</summary>
     public UnitValue<decimal>? PowerDelivered => ParseDecimalUnit(OBISRegistry.PowerDelivered);
+    /// <summary>Actual electricity power delivered average.</summary>
+    public UnitValue<decimal>? PowerDeliveredCurrentAvg => ParseDecimalUnit(BelgianOBISRegistry.PowerMaxCurrentAverage);
     /// <summary>Actual electricity power returned.</summary>
     public UnitValue<decimal>? PowerReturned => ParseDecimalUnit(OBISRegistry.PowerReturned);
     /// <summary>The actual threshold Electricity.</summary>
@@ -87,11 +91,11 @@ public class Telegram(string? identification, IEnumerable<(OBISId obisid, IEnume
     /// <summary>Instantaneous voltage L3.</summary>
     public UnitValue<decimal>? VoltageL3 => ParseDecimalUnit(OBISRegistry.VoltageL3);
     /// <summary>Instantaneous current L1.</summary>
-    public UnitValue<int>? CurrentL1 => ParseIntUnit(OBISRegistry.CurrentL1);
+    public UnitValue<decimal>? CurrentL1 => ParseDecimalUnit(OBISRegistry.CurrentL1);
     /// <summary>Instantaneous current L2.</summary>
-    public UnitValue<int>? CurrentL2 => ParseIntUnit(OBISRegistry.CurrentL2);
+    public UnitValue<decimal>? CurrentL2 => ParseDecimalUnit(OBISRegistry.CurrentL2);
     /// <summary>Instantaneous current L3.</summary>
-    public UnitValue<int>? CurrentL3 => ParseIntUnit(OBISRegistry.CurrentL3);
+    public UnitValue<decimal>? CurrentL3 => ParseDecimalUnit(OBISRegistry.CurrentL3);
     /// <summary>Instantaneous active power L1.</summary>
     public UnitValue<decimal>? PowerDeliveredL1 => ParseDecimalUnit(OBISRegistry.PowerDeliveredL1);
     /// <summary>Instantaneous active power L2.</summary>
@@ -107,12 +111,14 @@ public class Telegram(string? identification, IEnumerable<(OBISId obisid, IEnume
     /// <summary>Gas devicetype.</summary>
     public int? GasDeviceType => ParseInt(OBISRegistry.GasDeviceType);
     /// <summary>Gas equipment identifier.</summary>
-    public string? GasEquipmentId => DecodeString(GetByDescriptor(OBISRegistry.GasEquipmentId));
+    public string? GasEquipmentId => DecodeString(GetByDescriptor(OBISRegistry.GasEquipmentId)) ?? DecodeString(GetByDescriptor(BelgianOBISRegistry.GasEquipmentId));
     /// <summary>Gas valve position.</summary>
     public int? GasValvePosition => ParseInt(OBISRegistry.GasValvePosition);
+
     /// <summary>Gas delivered.</summary>
     public TimeStampedValue<UnitValue<decimal>>? GasDelivered =>
-        ParseTimeStampedValues(OBISRegistry.GasDelivered, ParseDecimalUnit).FirstOrDefault();
+        ParseTimeStampedValues(OBISRegistry.GasDelivered, ParseDecimalUnit).FirstOrDefault() ??
+        ParseTimeStampedValues(BelgianOBISRegistry.GasDelivered, ParseDecimalUnit).FirstOrDefault();
 
     /// <summary>Gas delivered - OLD (pre-V4).</summary>
     public TimeStampedValue<UnitValue<decimal>>? GasDeliveredOld =>
