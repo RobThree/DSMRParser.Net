@@ -1,26 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <LangVersion>latest</LangVersion>
-    <Nullable>enable</Nullable>
-    <IsPackable>false</IsPackable>
-    <Configurations>Debug;Release;ReleaseWithDocumentation</Configurations>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<LangVersion>latest</LangVersion>
+		<Nullable>enable</Nullable>
+		<IsPackable>false</IsPackable>
+		<Configurations>Debug;Release;ReleaseWithDocumentation</Configurations>
+		<EnableNETAnalyzers>true</EnableNETAnalyzers>
+		<AnalysisLevel>latest</AnalysisLevel>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
-    <PackageReference Include="MSTest.TestAdapter" Version="2.2.8" />
-    <PackageReference Include="MSTest.TestFramework" Version="2.2.8" />
-    <PackageReference Include="coverlet.collector" Version="3.1.2">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
+		<PackageReference Include="MSTest.TestAdapter" Version="2.2.8" />
+		<PackageReference Include="MSTest.TestFramework" Version="2.2.8" />
+		<PackageReference Include="coverlet.collector" Version="3.1.2">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\DSMRParser\DSMRParser.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\DSMRParser\DSMRParser.csproj" />
+	</ItemGroup>
 
   <ItemGroup>
     <None Update="testdata\v2_2_mangled.txt">
@@ -42,5 +44,4 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
 </Project>

@@ -13,7 +13,7 @@ public class TelegramParserTests
     public void DSMRTelegramParser_Reads_V2_2_Telegrams()
     {
         var target = new DSMRTelegramParser();
-        var telegram = target.Parse(File.ReadAllBytes(@"testdata\v2_2_ok.txt"));
+        var telegram = target.Parse(File.ReadAllBytes(@"testdata/v2_2_ok.txt"));
 
         Assert.AreEqual(@"Test\V2_2-Telegram", telegram.Identification);
         Assert.AreEqual("0123456", telegram.EquipmentId);
@@ -42,7 +42,7 @@ public class TelegramParserTests
     public void DSMRTelegramParser_Reads_V2_2_Mangled_Telegrams()
     {
         var target = new DSMRTelegramParser(true);
-        var telegram = target.Parse(File.ReadAllBytes(@"testdata\v2_2_mangled.txt"));
+        var telegram = target.Parse(File.ReadAllBytes(@"testdata/v2_2_mangled.txt"));
 
         Assert.AreEqual(@"Test\V2_2-Telegram_Mangled", telegram.Identification);
 
@@ -57,7 +57,7 @@ public class TelegramParserTests
     public void DSMRTelegramParser_Reads_V3_Telegrams()
     {
         var target = new DSMRTelegramParser();
-        var telegram = target.Parse(File.ReadAllBytes(@"testdata\v3_ok.txt"));
+        var telegram = target.Parse(File.ReadAllBytes(@"testdata/v3_ok.txt"));
 
         Assert.AreEqual(@"Test\V3-Telegram", telegram.Identification);
         Assert.AreEqual("FooBarBaz123", telegram.EquipmentId);
@@ -88,7 +88,7 @@ public class TelegramParserTests
     public void DSMRTelegramParser_Reads_V4_2_Telegrams()
     {
         var target = new DSMRTelegramParser();
-        var telegram = target.Parse(File.ReadAllBytes(@"testdata\v4_2_ok.txt"));
+        var telegram = target.Parse(File.ReadAllBytes(@"testdata/v4_2_ok.txt"));
         Assert.AreEqual(@"Test\V4_2-Telegram", telegram.Identification);
         Assert.AreEqual(42, telegram.DSMRVersion);
         Assert.AreEqual(new DateTimeOffset(2010, 12, 9, 11, 30, 20, TimeSpan.FromHours(1)), telegram.TimeStamp);
@@ -155,7 +155,7 @@ public class TelegramParserTests
     public void DSMRTelegramParser_Reads_V5_Telegrams()
     {
         var target = new DSMRTelegramParser();
-        var telegram = target.Parse(File.ReadAllBytes(@"testdata\v5_ok.txt"));
+        var telegram = target.Parse(File.ReadAllBytes(@"testdata/v5_ok.txt"));
         Assert.AreEqual(@"Test\V5-Telegram", telegram.Identification);
         Assert.AreEqual(50, telegram.DSMRVersion);
         Assert.AreEqual(new DateTimeOffset(2010, 12, 9, 11, 30, 20, TimeSpan.FromHours(1)), telegram.TimeStamp);

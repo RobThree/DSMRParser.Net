@@ -78,42 +78,42 @@ public static class OBISRegistry
     /// <summary>Instantaneous active power returned L3.</summary>
     public static readonly OBISDescriptor PowerReturnedL3 = new() { Id = new OBISId(1, 0, 62, 7, 0), Description = "Power returned l3", Unit = OBISUnit.kW };
     /// <summary>Gas devicetype.</summary>
-    public static readonly OBISDescriptor GasDeviceType = new() { Id = new OBISId(0, GAS_MBUS_ID, 24, 1, 0), Description = "Gas device type" };
+    public static readonly OBISDescriptor GasDeviceType = new() { Id = new OBISId(0, _gas_mbus_id, 24, 1, 0), Description = "Gas device type" };
     /// <summary>Gas equipment identifier.</summary>
-    public static readonly OBISDescriptor GasEquipmentId = new() { Id = new OBISId(0, GAS_MBUS_ID, 96, 1, 0), Description = "Gas equipment id" };
+    public static readonly OBISDescriptor GasEquipmentId = new() { Id = new OBISId(0, _gas_mbus_id, 96, 1, 0), Description = "Gas equipment id" };
     /// <summary>Gas valve position.</summary>
-    public static readonly OBISDescriptor GasValvePosition = new() { Id = new OBISId(0, GAS_MBUS_ID, 24, 4, 0), Description = "Gas valve position" };
+    public static readonly OBISDescriptor GasValvePosition = new() { Id = new OBISId(0, _gas_mbus_id, 24, 4, 0), Description = "Gas valve position" };
     /// <summary>Gas delivered.</summary>
-    public static readonly OBISDescriptor GasDelivered = new() { Id = new OBISId(0, GAS_MBUS_ID, 24, 2, 1), Description = "Gas delivered", Unit = OBISUnit.m3 };
+    public static readonly OBISDescriptor GasDelivered = new() { Id = new OBISId(0, _gas_mbus_id, 24, 2, 1), Description = "Gas delivered", Unit = OBISUnit.m3 };
     /// <summary>Gas delivered for V2.2 messages.</summary>
-    public static readonly OBISDescriptor GasDeliveredOld = new() { Id = new OBISId(0, GAS_MBUS_ID, 24, 3, 0), Description = "Gas delivered", Unit = OBISUnit.m3 };
+    public static readonly OBISDescriptor GasDeliveredOld = new() { Id = new OBISId(0, _gas_mbus_id, 24, 3, 0), Description = "Gas delivered", Unit = OBISUnit.m3 };
     /// <summary>Thermal devicetype.</summary>
-    public static readonly OBISDescriptor ThermalDeviceType = new() { Id = new OBISId(0, THERMAL_MBUS_ID, 24, 1, 0), Description = "Thermal device type" };
+    public static readonly OBISDescriptor ThermalDeviceType = new() { Id = new OBISId(0, _thermal_mbus_id, 24, 1, 0), Description = "Thermal device type" };
     /// <summary>Thermal equipment identifier.</summary>
-    public static readonly OBISDescriptor ThermalEquipmentId = new() { Id = new OBISId(0, THERMAL_MBUS_ID, 96, 1, 0), Description = "Thermal equipment id" };
+    public static readonly OBISDescriptor ThermalEquipmentId = new() { Id = new OBISId(0, _thermal_mbus_id, 96, 1, 0), Description = "Thermal equipment id" };
     /// <summary>Thermal valve position.</summary>
-    public static readonly OBISDescriptor ThermalValvePosition = new() { Id = new OBISId(0, THERMAL_MBUS_ID, 24, 4, 0), Description = "Thermal valve position" };
+    public static readonly OBISDescriptor ThermalValvePosition = new() { Id = new OBISId(0, _thermal_mbus_id, 24, 4, 0), Description = "Thermal valve position" };
     /// <summary>Thermal energy delivered.</summary>
-    public static readonly OBISDescriptor ThermalDelivered = new() { Id = new OBISId(0, THERMAL_MBUS_ID, 24, 2, 1), Description = "Thermal delivered", Unit = OBISUnit.MJ };
+    public static readonly OBISDescriptor ThermalDelivered = new() { Id = new OBISId(0, _thermal_mbus_id, 24, 2, 1), Description = "Thermal delivered", Unit = OBISUnit.MJ };
     /// <summary>Water devicetype.</summary>
-    public static readonly OBISDescriptor WaterDeviceType = new() { Id = new OBISId(0, WATER_MBUS_ID, 24, 1, 0), Description = "Water device type" };
+    public static readonly OBISDescriptor WaterDeviceType = new() { Id = new OBISId(0, _water_mbus_id, 24, 1, 0), Description = "Water device type" };
     /// <summary>Water equipment identifier.</summary>
-    public static readonly OBISDescriptor WaterEquipmentId = new() { Id = new OBISId(0, WATER_MBUS_ID, 96, 1, 0), Description = "Water equipment id" };
+    public static readonly OBISDescriptor WaterEquipmentId = new() { Id = new OBISId(0, _water_mbus_id, 96, 1, 0), Description = "Water equipment id" };
     /// <summary>Water valve position.</summary>
-    public static readonly OBISDescriptor WaterValvePosition = new() { Id = new OBISId(0, WATER_MBUS_ID, 24, 4, 0), Description = "Water valve position" };
+    public static readonly OBISDescriptor WaterValvePosition = new() { Id = new OBISId(0, _water_mbus_id, 24, 4, 0), Description = "Water valve position" };
     /// <summary>Water delivered.</summary>
-    public static readonly OBISDescriptor WaterDelivered = new() { Id = new OBISId(0, WATER_MBUS_ID, 24, 2, 1), Description = "Water delivered", Unit = OBISUnit.m3 };
+    public static readonly OBISDescriptor WaterDelivered = new() { Id = new OBISId(0, _water_mbus_id, 24, 2, 1), Description = "Water delivered", Unit = OBISUnit.m3 };
     /// <summary>Slave devicetype.</summary>
-    public static readonly OBISDescriptor SlaveDeviceType = new() { Id = new OBISId(0, SLAVE_MBUS_ID, 24, 1, 0), Description = "Slave device type" };
+    public static readonly OBISDescriptor SlaveDeviceType = new() { Id = new OBISId(0, _slave_mbus_id, 24, 1, 0), Description = "Slave device type" };
     /// <summary>Slave equipment identifier.</summary>
-    public static readonly OBISDescriptor SlaveEquipmentId = new() { Id = new OBISId(0, SLAVE_MBUS_ID, 96, 1, 0), Description = "Slave equipment id" };
+    public static readonly OBISDescriptor SlaveEquipmentId = new() { Id = new OBISId(0, _slave_mbus_id, 96, 1, 0), Description = "Slave equipment id" };
     /// <summary>Slave valve position.</summary>
-    public static readonly OBISDescriptor SlaveValvePosition = new() { Id = new OBISId(0, SLAVE_MBUS_ID, 24, 4, 0), Description = "Slave valve position" };
+    public static readonly OBISDescriptor SlaveValvePosition = new() { Id = new OBISId(0, _slave_mbus_id, 24, 4, 0), Description = "Slave valve position" };
     /// <summary>Slave delivered value.</summary>
-    public static readonly OBISDescriptor SlaveDelivered = new() { Id = new OBISId(0, SLAVE_MBUS_ID, 24, 2, 1), Description = "Slave delivered", Unit = OBISUnit.kWh };
+    public static readonly OBISDescriptor SlaveDelivered = new() { Id = new OBISId(0, _slave_mbus_id, 24, 2, 1), Description = "Slave delivered", Unit = OBISUnit.kWh };
 
-    private const int GAS_MBUS_ID = 1;
-    private const int WATER_MBUS_ID = 2;
-    private const int THERMAL_MBUS_ID = 3;
-    private const int SLAVE_MBUS_ID = 4;
+    private const int _gas_mbus_id = 1;
+    private const int _water_mbus_id = 2;
+    private const int _thermal_mbus_id = 3;
+    private const int _slave_mbus_id = 4;
 }

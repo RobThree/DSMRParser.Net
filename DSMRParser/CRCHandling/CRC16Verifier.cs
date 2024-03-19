@@ -62,7 +62,7 @@ public class CRC16Verifier : ICRCVerifier
         }
 
         // Get the CRC claimed by the telegram
-        var crcstring = Encoding.ASCII.GetString(rawTelegram[(crcstart)..(crcstart + 4)]);
+        var crcstring = Encoding.ASCII.GetString(rawTelegram[crcstart..(crcstart + 4)]);
         // Compare CRCs
         if (int.TryParse(crcstring, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var claimedcrc) && claimedcrc == calculatedcrc)
         {
