@@ -48,10 +48,14 @@ public class Telegram(string? identification, IEnumerable<(OBISId obisid, IEnume
     public UnitValue<decimal>? EnergyReturnedTariff1 => ParseDecimalUnit(OBISRegistry.EnergyReturnedTariff1);
     /// <summary>Electricity returned (Tariff 2).</summary>
     public UnitValue<decimal>? EnergyReturnedTariff2 => ParseDecimalUnit(OBISRegistry.EnergyReturnedTariff2);
+    /// <summary>Instantaneous energy delivered max running month.</summary>
+    public TimeStampedValue<UnitValue<decimal>>? EnergyDeliveredMaxRunningMonth => ParseTimeStampedValues(BelgianOBISRegistry.PowerDeliveredMaxRunningMonth, ParseDecimalUnit).FirstOrDefault();
     /// <summary>Tariff indicator electricity.</summary>
     public int? ElectricityTariff => ParseInt(OBISRegistry.ElectricityTariff);
     /// <summary>Actual electricity power delivered.</summary>
     public UnitValue<decimal>? PowerDelivered => ParseDecimalUnit(OBISRegistry.PowerDelivered);
+    /// <summary>Actual electricity power delivered average.</summary>
+    public UnitValue<decimal>? PowerDeliveredCurrentAvg => ParseDecimalUnit(BelgianOBISRegistry.PowerMaxCurrentAverage);
     /// <summary>Actual electricity power returned.</summary>
     public UnitValue<decimal>? PowerReturned => ParseDecimalUnit(OBISRegistry.PowerReturned);
     /// <summary>The actual threshold Electricity.</summary>

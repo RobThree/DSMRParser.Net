@@ -264,8 +264,13 @@ public class TelegramParserTests
 
         Assert.AreEqual(2, telegram.ElectricityTariff);
 
-        // TODO: add Current average demand - Active energy import
-        // TODO: Maximum demand – Active energy import of the running month
+        Assert.AreEqual(OBISUnit.kW, telegram.PowerDeliveredCurrentAvg!.Unit);
+        Assert.AreEqual(0.554m, telegram.PowerDeliveredCurrentAvg!.Value);
+
+        Assert.AreEqual(new DateTimeOffset(2023, 01, 7, 17, 15, 00, TimeSpan.FromHours(1)), telegram.EnergyDeliveredMaxRunningMonth!.DateTime);
+        Assert.AreEqual(OBISUnit.kW, telegram.EnergyDeliveredMaxRunningMonth!.Value!.Unit);
+        Assert.AreEqual(2.572m, telegram.EnergyDeliveredMaxRunningMonth!.Value!.Value);
+
         // TODO: Maximum demand – Active energy import of the last 13 months
 
         Assert.AreEqual(0.544m, telegram.PowerDelivered!.Value);
