@@ -6,6 +6,8 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using NodaTime;
+using NodaTime.Text;
 
 namespace DSMRParser.Models;
 
@@ -26,7 +28,7 @@ public class Telegram(string? identification, IEnumerable<(OBISId obisid, IEnume
 {
     /// <summary>The culture used for parsing values (affecting parsing of values like "1.234,56" vs "1,234.56".</summary>
     private static readonly CultureInfo _culture = CultureInfo.InvariantCulture;
-    private static readonly TimeZoneInfo _dutchtimezone = TimeZoneInfo.FindSystemTimeZoneById("W. Europe Standard Time");
+    private static readonly DateTimeZone _dutchtimezone = DateTimeZoneProviders.Tzdb["Europe/Amsterdam"];
 
     /// <summary>An empty dictionary of OBIS values.</summary>
     protected static readonly IReadOnlyDictionary<OBISId, IEnumerable<string?>> EMPTY = new ReadOnlyDictionary<OBISId, IEnumerable<string?>>(Array.Empty<OBISDescriptor>().ToDictionary(i => i.Id, i => Enumerable.Empty<string?>()));
@@ -197,9 +199,13 @@ public class Telegram(string? identification, IEnumerable<(OBISId obisid, IEnume
     {
         if (DateTime.TryParseExact(value?.TrimEnd('W', 'S'), "yyMMddHHmmss", _culture, DateTimeStyles.None, out var dt))
         {
-            result = new DateTimeOffset(dt, _dutchtimezone.GetUtcOffset(dt));
+            var localDt = LocalDateTime.FromDateTime(dt);
+            var zonedDt = localDt.InZoneLeniently(_dutchtimezone);
+            result = zonedDt.ToDateTimeOffset();
+            
             return true;
         }
+        
         result = default;
         return false;
     }
