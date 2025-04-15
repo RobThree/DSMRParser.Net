@@ -156,6 +156,7 @@ public class TelegramParserTests
     {
         var target = new DSMRTelegramParser();
         var telegram = target.Parse(File.ReadAllBytes(@"testdata/v5_ok.txt"));
+
         Assert.AreEqual(@"Test\V5-Telegram", telegram.Identification);
         Assert.AreEqual(50, telegram.DSMRVersion);
         Assert.AreEqual(new DateTimeOffset(2010, 12, 9, 11, 30, 20, TimeSpan.FromHours(1)), telegram.TimeStamp);

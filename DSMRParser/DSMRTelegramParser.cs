@@ -21,12 +21,14 @@ namespace DSMRParser;
 /// </remarks>
 /// <param name="crcVerifier">The <see cref="ICRCVerifier"/> to use for verifying CRC's.</param>
 /// <param name="fixMangledTelegrams">Wether to (try to) fix 'mangled' telegrams (telegrams that don't adhere to the spec)</param>
+/// <param name="timeZone">Timezone to use when parsing date/time data for a <see cref="Telegram"/>. When null, "W. Europe Standard Time" is used.</param>
 /// <exception cref="ArgumentNullException">Thrown when the <paramref name="crcVerifier"/> is null.</exception>
-public class DSMRTelegramParser(ICRCVerifier crcVerifier, bool fixMangledTelegrams = DSMRTelegramParser._defaultfixmangled) : IDSMRTelegramParser
+public class DSMRTelegramParser(ICRCVerifier crcVerifier, bool fixMangledTelegrams = DSMRTelegramParser._defaultfixmangled, TimeZoneInfo? timeZone = null) : IDSMRTelegramParser
 {
     private readonly ICRCVerifier _crc = crcVerifier ?? throw new ArgumentNullException(nameof(crcVerifier));
-    private const bool _defaultignorecrc = false;
+    private readonly TimeZoneInfo _timezone = timeZone ?? TimeZoneInfo.FindSystemTimeZoneById("W. Europe Standard Time");
     private readonly bool _fixmangled = fixMangledTelegrams;
+    private const bool _defaultignorecrc = false;
     private const bool _defaultfixmangled = false;
     private const string _lineseparator = "\r\n";
 
@@ -34,8 +36,9 @@ public class DSMRTelegramParser(ICRCVerifier crcVerifier, bool fixMangledTelegra
     /// Initializes a new instance of a <see cref="DSMRTelegramParser"/> with a default <see cref="ICRCVerifier"/>.
     /// </summary>
     /// <param name="fixMangledTelegrams">Wether to (try to) fix 'mangled' telegrams (telegrams that don't adhere to the spec)</param>
-    public DSMRTelegramParser(bool fixMangledTelegrams = _defaultfixmangled)
-        : this(ICRCVerifier.Default, fixMangledTelegrams) { }
+    /// <param name="timeZone">Timezone to use when parsing date/time data for a <see cref="Telegram"/>. When null, "W. Europe Standard Time" is used.</param>
+    public DSMRTelegramParser(bool fixMangledTelegrams = _defaultfixmangled, TimeZoneInfo? timeZone = null)
+        : this(ICRCVerifier.Default, fixMangledTelegrams, timeZone) { }
 
     /// <summary>
     /// Parses a DSMR telegram in raw byte form into a <see cref="Telegram"/>.
@@ -174,7 +177,8 @@ public class DSMRTelegramParser(ICRCVerifier crcVerifier, bool fixMangledTelegra
                     .Where(l => !string.IsNullOrEmpty(l) && char.IsDigit(l[0])) // Only process lines starting with a digit
                     .Select(l => (          // Parse values from telegram data
                         OBISId.FromString(l[..Math.Max(0, l.IndexOf('(', StringComparison.Ordinal))]), GetValues(l)
-                    ))
+                    )),
+                _timezone
             );
 
             return null;    // No exceptions, all went well!

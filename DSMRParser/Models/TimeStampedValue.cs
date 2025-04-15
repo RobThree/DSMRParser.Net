@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Globalization;
 
 namespace DSMRParser.Models;
@@ -7,6 +8,7 @@ namespace DSMRParser.Models;
 /// Represents a value at a given point in time.
 /// </summary>
 /// <typeparam name="T">The type of the value.</typeparam>
+[DebuggerDisplay("{ToString()}")]
 public record TimeStampedValue<T>
 {
     /// <summary>

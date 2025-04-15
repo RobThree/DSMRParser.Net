@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Globalization;
 
 namespace DSMRParser.Models;
@@ -7,6 +8,7 @@ namespace DSMRParser.Models;
 /// Represents a value in a given unit.
 /// </summary>
 /// <typeparam name="T">The type of the value.</typeparam>
+[DebuggerDisplay("{ToString()}")]
 public record UnitValue<T> : IUnitValue
 {
     /// <summary>
