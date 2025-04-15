@@ -1,10 +1,13 @@
-﻿namespace DSMRParser.Models;
+﻿using System;
+using System.Globalization;
+
+namespace DSMRParser.Models;
 
 /// <summary>
 /// Represents a value in a given unit.
 /// </summary>
 /// <typeparam name="T">The type of the value.</typeparam>
-public record UnitValue<T>
+public record UnitValue<T> : IUnitValue
 {
     /// <summary>
     /// Gets the value.
@@ -27,8 +30,41 @@ public record UnitValue<T>
     }
 
     /// <summary>
-    /// Converts a <see cref="TimeStampedValue{T}"/> to a string.
+    /// Converts a <see cref="UnitValue{T}"/> to a string.
     /// </summary>
-    /// <returns>Returns a string representing a <see cref="TimeStampedValue{T}"/>.</returns>
-    public override string ToString() => $"{Value}{Unit}";
+    /// <returns>Returns a string representing a <see cref="UnitValue{T}"/>.</returns>
+    public override string ToString()
+        => ToString(null, null);
+
+    /// <summary>
+    /// Converts a <see cref="UnitValue{T}"/> to a string.
+    /// </summary>
+    /// <param name="format">The format to use -or- a null reference to use the default format
+    /// defined for the type of the <see cref="IFormattable"/> implementation.</param>
+    /// <returns>Returns a string representing a <see cref="UnitValue{T}"/>.</returns>
+    public string ToString(string? format)
+        => ToString(format, null);
+
+    /// <summary>
+    /// Converts a <see cref="UnitValue{T}"/> to a string.
+    /// </summary>
+    /// <param name="formatProvider">The provider to use to format the value.</param>
+    /// <returns>Returns a string representing a <see cref="UnitValue{T}"/>.</returns>
+    public string ToString(IFormatProvider formatProvider)
+        => ToString(null, formatProvider);
+
+    /// <summary>
+    /// Converts a <see cref="UnitValue{T}"/> to a string.
+    /// </summary>
+    /// <param name="format">The format to use -or- a null reference to use the default format
+    /// defined for the type of the <see cref="IFormattable"/> implementation.</param>
+    /// <param name="formatProvider">The provider to use to format the value.</param>
+    /// <returns>Returns a string representing a <see cref="UnitValue{T}"/>.</returns>
+    public string ToString(string? format, IFormatProvider? formatProvider)
+        => Value switch
+        {
+            null => string.Empty,
+            IFormattable formattable => formattable.ToString(format, formatProvider ?? CultureInfo.InvariantCulture),
+            _ => Value.ToString() ?? string.Empty
+        } + Unit.ToUnitString();
 }

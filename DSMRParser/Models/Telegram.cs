@@ -63,7 +63,9 @@ public class Telegram(string? identification, IEnumerable<(OBISId obisid, IEnume
     /// <summary>Number of long power failures in any phase.</summary>
     public int? ElectricityLongFailures => ParseInt(OBISRegistry.ElectricityLongFailures);
     /// <summary>Power Failure Event Log.</summary>
-    public IEnumerable<TimeStampedValue<TimeSpan>> ElectricityFailureLog => ParseTimeStampedValues(OBISRegistry.ElectricityFailureLog, (d, v) => TimeSpan.FromSeconds(ParseLongUnit(d, v)?.Value ?? 0), 2);
+    public IEnumerable<TimeStampedValue<TimeSpan>> ElectricityFailureLog
+        => ParseTimeStampedValues(OBISRegistry.ElectricityFailureLog, (d, v) => TimeSpan.FromSeconds(ParseLongUnit(d, v)?.Value ?? 0), 2);
+
     /// <summary>Number of voltage sags in phase L1.</summary>
     public int? ElectricitySagsL1 => ParseInt(OBISRegistry.ElectricitySagsL1);
     /// <summary>Number of voltage sags in phase L2.</summary>
@@ -213,7 +215,8 @@ public class Telegram(string? identification, IEnumerable<(OBISId obisid, IEnume
     /// <paramref name="result"/> contains a valid <see cref="byte"/> or null when the method returns false.
     /// </param>
     /// <returns>True if the parse operation was successful; otherwise, false.</returns>
-    protected static bool TryParseHexByteCore(string? value, out byte result) => byte.TryParse(value, NumberStyles.HexNumber, _culture, out result);
+    protected static bool TryParseHexByteCore(string? value, out byte result)
+        => byte.TryParse(value, NumberStyles.HexNumber, _culture, out result);
 
     /// <summary>
     /// Attempts to parse an integer value.
@@ -224,7 +227,8 @@ public class Telegram(string? identification, IEnumerable<(OBISId obisid, IEnume
     /// <paramref name="result"/> contains a valid <see cref="int"/> or null when the method returns false.
     /// </param>
     /// <returns>True if the parse operation was successful; otherwise, false.</returns>
-    protected static bool TryParseIntCore(string? value, out int result) => int.TryParse(value, NumberStyles.Integer, _culture, out result);
+    protected static bool TryParseIntCore(string? value, out int result)
+        => int.TryParse(value, NumberStyles.Integer, _culture, out result);
 
     /// <summary>
     /// Attempts to parse a long value.
@@ -235,7 +239,8 @@ public class Telegram(string? identification, IEnumerable<(OBISId obisid, IEnume
     /// <paramref name="result"/> contains a valid <see cref="long"/> or null when the method returns false.
     /// </param>
     /// <returns>True if the parse operation was successful; otherwise, false.</returns>
-    protected static bool TryParseLongCore(string? value, out long result) => long.TryParse(value, NumberStyles.Integer, _culture, out result);
+    protected static bool TryParseLongCore(string? value, out long result)
+        => long.TryParse(value, NumberStyles.Integer, _culture, out result);
 
     /// <summary>
     /// Attempts to parse a decimal value.
@@ -246,7 +251,8 @@ public class Telegram(string? identification, IEnumerable<(OBISId obisid, IEnume
     /// <paramref name="result"/> contains a valid <see cref="decimal"/> or null when the method returns false.
     /// </param>
     /// <returns>True if the parse operation was successful; otherwise, false.</returns>
-    protected static bool TryParseDecimalCore(string? value, out decimal result) => decimal.TryParse(value, NumberStyles.AllowDecimalPoint, _culture, out result);
+    protected static bool TryParseDecimalCore(string? value, out decimal result)
+        => decimal.TryParse(value, NumberStyles.AllowDecimalPoint, _culture, out result);
 
     /// <summary>
     /// Attempts to parse an enum value.
@@ -258,7 +264,8 @@ public class Telegram(string? identification, IEnumerable<(OBISId obisid, IEnume
     /// <paramref name="result"/> contains a valid enum value or null when the method returns false.
     /// </param>
     /// <returns>True if the parse operation was successful; otherwise, false.</returns>
-    protected static bool TryParseEnumCore<T>(string? value, out T result) where T : struct => Enum.TryParse<T>(value, out result);
+    protected static bool TryParseEnumCore<T>(string? value, out T result)
+        where T : struct => Enum.TryParse<T>(value, out result);
 
     /// <summary>
     /// Parses a timestamp in yyMMddHHmmss to a <see cref="DateTimeOffset"/>.
@@ -329,7 +336,8 @@ public class Telegram(string? identification, IEnumerable<(OBISId obisid, IEnume
     /// The <see cref="OBISDescriptor"/> specifying the value to find in the telegram and parse as <see cref="UnitValue{T}"/>
     /// </param>
     /// <returns>Returns a <see cref="UnitValue{T}"/> when parsing the given <paramref name="descriptor"/> succeeded, null otherwise.</returns>
-    protected UnitValue<int>? ParseIntUnit(OBISDescriptor descriptor) => ParseIntUnit(descriptor, GetByDescriptor(descriptor));
+    protected UnitValue<int>? ParseIntUnit(OBISDescriptor descriptor)
+        => ParseIntUnit(descriptor, GetByDescriptor(descriptor));
     /// <summary>
     /// Attempts to parse a given value with unit from a given <see cref="OBISDescriptor"/>.
     /// </summary>
@@ -406,7 +414,8 @@ public class Telegram(string? identification, IEnumerable<(OBISId obisid, IEnume
     /// <param name="expected">The expected <see cref="OBISUnit"/> the value should represent.</param>
     /// <param name="actual">The actual unit the value represents.</param>
     /// <returns>True when the given string matches the given <see cref="OBISUnit"/>, false otherwise.</returns>
-    protected static bool IsCorrectUnit(OBISUnit expected, string? actual) => TryParseEnumCore<OBISUnit>(actual, out var result) && expected == result;
+    protected static bool IsCorrectUnit(OBISUnit expected, string? actual)
+        => TryParseEnumCore<OBISUnit>(actual, out var result) && expected == result;
 
     /// <summary>
     /// Parses values in (date)(value)(date)(value)... format to an <see cref="TimeStampedValue{T}"/> enumerable.
@@ -462,7 +471,9 @@ public class Telegram(string? identification, IEnumerable<(OBISId obisid, IEnume
     /// </summary>
     /// <param name="value">The "hex byte format string".</param>
     /// <returns>The string the "hex byte string" represents.</returns>
-    protected static string? DecodeString(string? value) => (!string.IsNullOrEmpty(value) && value.Length % 2 == 0) ? Encoding.ASCII.GetString([.. DecodeHexString(value)]) : value;
+    protected static string? DecodeString(string? value)
+        => (!string.IsNullOrEmpty(value) && value.Length % 2 == 0) ? Encoding.ASCII.GetString([.. DecodeHexString(value)]) : value;
+
     /// <summary>
     /// Decodes a string in "hex byte format" to it's byte values.
     /// </summary>

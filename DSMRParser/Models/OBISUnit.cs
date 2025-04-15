@@ -5,7 +5,7 @@
 /// </summary>
 public enum OBISUnit
 {
-    /// <summary>Unit-less</summary>
+    /// <summary>Unitless</summary>
     NONE,
     /// <summary>Watts</summary>
     W,
