@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
 using System.Text;
 
 namespace DSMRParser.Models;
@@ -67,7 +66,7 @@ public record OBISId
     /// Thrown when <paramref name="id"/> is null or empty or any of the parts contain an invalid value.
     /// </exception>
     public OBISId(string id)
-        : this(string.IsNullOrEmpty(id) ? throw new InvalidOBISIdException("Null or empty OBIS ID") : GetParts(id).ToArray()) { }
+        : this(string.IsNullOrEmpty(id) ? throw new InvalidOBISIdException("Null or empty OBIS ID") : [.. GetParts(id)]) { }
 
     /// <summary>
     /// Creates an <see cref="OBISId"/> from a string representation of an OBIS ID.

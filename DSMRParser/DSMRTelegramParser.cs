@@ -44,7 +44,8 @@ public class DSMRTelegramParser(ICRCVerifier crcVerifier, bool fixMangledTelegra
     /// <returns>A <see cref="Telegram"/> that represents the given <paramref name="telegram"/>.</returns>
     /// <exception cref="TelegramFormatException">Thrown when the given <paramref name="telegram"/> is in an invalid format.</exception>
     /// <exception cref="NullReferenceException">Thrown when the parsed <see cref="Telegram"/> resulted in a null value.</exception>
-    public Telegram Parse(Span<byte> telegram) => Parse(telegram, _defaultignorecrc);
+    public Telegram Parse(Span<byte> telegram)
+        => Parse(telegram, _defaultignorecrc);
 
     /// <summary>
     /// Parses a DSMR telegram in raw byte form into a <see cref="Telegram"/>.
@@ -67,7 +68,8 @@ public class DSMRTelegramParser(ICRCVerifier crcVerifier, bool fixMangledTelegra
     /// <returns>A <see cref="Telegram"/> that represents the given <paramref name="telegram"/>.</returns>
     /// <exception cref="TelegramFormatException">Thrown when the given <paramref name="telegram"/> is in an invalid format.</exception>
     /// <exception cref="NullReferenceException">Thrown when the parsed <see cref="Telegram"/> resulted in a null value.</exception>
-    public Telegram Parse(string telegram) => Parse(Encoding.ASCII.GetBytes(telegram), _defaultignorecrc);
+    public Telegram Parse(string telegram)
+        => Parse(Encoding.ASCII.GetBytes(telegram), _defaultignorecrc);
 
     /// <summary>
     /// Parses a DSMR telegram in ASCII string form into a <see cref="Telegram"/>.
@@ -77,7 +79,8 @@ public class DSMRTelegramParser(ICRCVerifier crcVerifier, bool fixMangledTelegra
     /// <returns>A <see cref="Telegram"/> that represents the given <paramref name="telegram"/>.</returns>
     /// <exception cref="TelegramFormatException">Thrown when the given <paramref name="telegram"/> is in an invalid format.</exception>
     /// <exception cref="NullReferenceException">Thrown when the parsed <see cref="Telegram"/> resulted in a null value.</exception>
-    public Telegram Parse(string telegram, bool ignoreCrc = _defaultignorecrc) => Parse(Encoding.ASCII.GetBytes(telegram), ignoreCrc);
+    public Telegram Parse(string telegram, bool ignoreCrc = _defaultignorecrc)
+        => Parse(Encoding.ASCII.GetBytes(telegram), ignoreCrc);
 
     /// <summary>
     /// Attempts to parse a DSMR telegram in raw byte form into a <see cref="Telegram"/>.
@@ -88,7 +91,8 @@ public class DSMRTelegramParser(ICRCVerifier crcVerifier, bool fixMangledTelegra
     /// <paramref name="result"/> contains a valid <see cref="Telegram"/> or null when the method returns false.
     /// </param>
     /// <returns>True if the parse operation was successful; otherwise, false.</returns>
-    public bool TryParse(Span<byte> telegram, [NotNullWhen(true)] out Telegram? result) => TryParseCore(telegram, _defaultignorecrc, out result) is null;
+    public bool TryParse(Span<byte> telegram, [NotNullWhen(true)] out Telegram? result)
+        => TryParseCore(telegram, _defaultignorecrc, out result) is null;
 
     /// <summary>
     /// Attempts to parse a DSMR telegram in raw byte form into a <see cref="Telegram"/>.
@@ -100,7 +104,8 @@ public class DSMRTelegramParser(ICRCVerifier crcVerifier, bool fixMangledTelegra
     /// <paramref name="result"/> contains a valid <see cref="Telegram"/> or null when the method returns false.
     /// </param>
     /// <returns>True if the parse operation was successful; otherwise, false.</returns>
-    public bool TryParse(Span<byte> telegram, bool ignoreCrc, [NotNullWhen(true)] out Telegram? result) => TryParseCore(telegram, ignoreCrc, out result) is null;
+    public bool TryParse(Span<byte> telegram, bool ignoreCrc, [NotNullWhen(true)] out Telegram? result)
+        => TryParseCore(telegram, ignoreCrc, out result) is null;
 
     /// <summary>
     /// Attempts to parse a DSMR telegram in ASCII string form into a <see cref="Telegram"/>.
@@ -111,7 +116,8 @@ public class DSMRTelegramParser(ICRCVerifier crcVerifier, bool fixMangledTelegra
     /// <paramref name="result"/> contains a valid <see cref="Telegram"/> or null when the method returns false.
     /// </param>
     /// <returns>True if the parse operation was successful; otherwise, false.</returns>
-    public bool TryParse(string telegram, [NotNullWhen(true)] out Telegram? result) => TryParse(Encoding.ASCII.GetBytes(telegram), _defaultignorecrc, out result);
+    public bool TryParse(string telegram, [NotNullWhen(true)] out Telegram? result)
+        => TryParse(Encoding.ASCII.GetBytes(telegram), _defaultignorecrc, out result);
 
     /// <summary>
     /// Attempts to parse a DSMR telegram in ASCII string form into a <see cref="Telegram"/>.
@@ -123,7 +129,8 @@ public class DSMRTelegramParser(ICRCVerifier crcVerifier, bool fixMangledTelegra
     /// <paramref name="result"/> contains a valid <see cref="Telegram"/> or null when the method returns false.
     /// </param>
     /// <returns>True if the parse operation was successful; otherwise, false.</returns>
-    public bool TryParse(string telegram, bool ignoreCrc, [NotNullWhen(true)] out Telegram? result) => TryParse(Encoding.ASCII.GetBytes(telegram), ignoreCrc, out result);
+    public bool TryParse(string telegram, bool ignoreCrc, [NotNullWhen(true)] out Telegram? result)
+        => TryParse(Encoding.ASCII.GetBytes(telegram), ignoreCrc, out result);
 
     /// <summary>
     /// Attempts to parse a DSMR telegram in raw byte form into a <see cref="Telegram"/>.
@@ -162,12 +169,12 @@ public class DSMRTelegramParser(ICRCVerifier crcVerifier, bool fixMangledTelegra
             }
 
             result = new Telegram(
-                            lines[0].TrimStart('/'),    // Get identification (part after the "/" of the first line)
-                            lines.Skip(1)               // Skip identification (mandatory empty line has already been removed by Split method)
-                                .Where(l => !string.IsNullOrEmpty(l) && char.IsDigit(l[0])) // Only process lines starting with a digit
-                                .Select(l => (          // Parse values from telegram data
-                                    OBISId.FromString(l[..Math.Max(0, l.IndexOf('(', StringComparison.Ordinal))]), GetValues(l)
-                                ))
+                lines[0].TrimStart('/'),    // Get identification (part after the "/" of the first line)
+                lines.Skip(1)               // Skip identification (mandatory empty line has already been removed by Split method)
+                    .Where(l => !string.IsNullOrEmpty(l) && char.IsDigit(l[0])) // Only process lines starting with a digit
+                    .Select(l => (          // Parse values from telegram data
+                        OBISId.FromString(l[..Math.Max(0, l.IndexOf('(', StringComparison.Ordinal))]), GetValues(l)
+                    ))
             );
 
             return null;    // No exceptions, all went well!
@@ -179,10 +186,8 @@ public class DSMRTelegramParser(ICRCVerifier crcVerifier, bool fixMangledTelegra
     /// <summary>
     /// Extracts values like "(a)(b)(c)" and returns these as a string array.
     /// </summary>
-#pragma warning disable CA1859 // Use concrete types when possible for improved performance
-    private static IEnumerable<string?> GetValues(string value) => value[value.IndexOf('(', StringComparison.Ordinal)..].TrimStart('(').TrimEnd(')').Split(")(");
-#pragma warning restore CA1859 // Use concrete types when possible for improved performance
-
+    private static IEnumerable<string?> GetValues(string value)
+        => value[value.IndexOf('(', StringComparison.Ordinal)..].TrimStart('(').TrimEnd(')').Split(")(");
 
     private static readonly Regex _fixgasvalue = new(@"(0-1:24.3.0)\((\d+)\)(.*?)\n\(([\d\.]+)\)", RegexOptions.CultureInvariant | RegexOptions.Compiled);
     private static string[] FixLines(string[] lines)
@@ -191,7 +196,4 @@ public class DSMRTelegramParser(ICRCVerifier crcVerifier, bool fixMangledTelegra
         tmp = _fixgasvalue.Replace(tmp, "$1($2)($4*m3)");
         return tmp.Split(_lineseparator);
     }
-
-
-
 }

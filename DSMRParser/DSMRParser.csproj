@@ -8,7 +8,7 @@
 		<Authors>RobIII</Authors>
 		<Company>Devcorner.nl</Company>
 		<Product>DSMRParser.Net</Product>
-		<Copyright>Copyright ©2020 - 2024 Devcorner.nl</Copyright>
+		<Copyright>Copyright ©2020 - 2025 Devcorner.nl</Copyright>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<Description>Parser for DSMR telegrams</Description>
 		<PackageTags>DSMR;P1;p1meter;dutch;IEC62056-21;IEC 62056-61;obis;telegram;netbeheer nederland</PackageTags>
@@ -40,10 +40,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="IsExternalInit" Version="1.0.3">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
+	  <PackageReference Include="PolySharp" Version="1.15.0">
+	    <PrivateAssets>all</PrivateAssets>
+	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
 	</ItemGroup>
 
 </Project>

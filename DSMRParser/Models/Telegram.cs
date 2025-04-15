@@ -462,7 +462,7 @@ public class Telegram(string? identification, IEnumerable<(OBISId obisid, IEnume
     /// </summary>
     /// <param name="value">The "hex byte format string".</param>
     /// <returns>The string the "hex byte string" represents.</returns>
-    protected static string? DecodeString(string? value) => (!string.IsNullOrEmpty(value) && value.Length % 2 == 0) ? Encoding.ASCII.GetString(DecodeHexString(value).ToArray()) : value;
+    protected static string? DecodeString(string? value) => (!string.IsNullOrEmpty(value) && value.Length % 2 == 0) ? Encoding.ASCII.GetString([.. DecodeHexString(value)]) : value;
     /// <summary>
     /// Decodes a string in "hex byte format" to it's byte values.
     /// </summary>
