@@ -52,12 +52,12 @@ The [`IDSMRTelegramParser`](DSMRParser/IDSMRTelegramParser.cs) interface has the
 ```c#
 Telegram Parse(Span<byte> telegram);
 ```
-However, the [default implementation](DSMRParser/DSMRTelegramParser.cs) provides a few useful additional methods, show (simplified) below:
+However, the [default implementation](DSMRParser/DSMRTelegramParser.cs) provides a few useful additional methods, shown (simplified) below:
 ```c#
-public Telegram Parse(Span<byte> telegram, bool ignoreCrc = false)
-public Telegram Parse(string telegram, bool ignoreCrc = false)
-public bool TryParse(Span<byte> telegram, bool ignoreCrc = false, out Telegram? result) 
-public bool TryParse(string telegram, bool ignoreCrc = false, out Telegram? result)
+Telegram Parse(Span<byte> telegram, bool ignoreCrc = false)
+Telegram Parse(string telegram, bool ignoreCrc = false)
+bool TryParse(Span<byte> telegram, bool ignoreCrc = false, out Telegram? result) 
+bool TryParse(string telegram, bool ignoreCrc = false, out Telegram? result)
 ```
 
 Since this API follows .Net conventions, usage shouldn't be a surprise. The `Parse` method will throw an exception if the telegram is invalid, while `TryParse` will return a boolean indicating success or failure and provide the result in the `out` argument. The `telegram` can be provided as string or as `Span<byte>` and the `ignoreCrc` does what it says on the tin: it ignores issues with the CRC.
