@@ -9,20 +9,41 @@ DSMR Parser for .Net. Available as [NuGet package](https://www.nuget.org/package
 
 ```c#
 var parser = new DSMRTelegramParser();
-var telegram = parser.Parse(File.ReadAllText(@"mytelegram.txt"));
+var telegram = parser.Parse(File.ReadAllText("path/to/mytelegram.txt"));
+// You don't need to use a file, you can also use a string or span<byte> directly
 
 // Do stuff with the telegram
-Console.WriteLine(telegram.VoltageL1?.ToString());
-Console.WriteLine(telegram.VoltageL1?.Value);
-Console.WriteLine(telegram.VoltageL1?.Unit);
+Console.WriteLine(telegram.EnergyDeliveredTariff1.ToString());
+Console.WriteLine(telegram.EnergyDeliveredTariff1.Value);
+Console.WriteLine(telegram.EnergyDeliveredTariff1.Unit);
+
+// Get original, raw string
+Console.WriteLine(telegram.GetByObisID("1-0:1.8.1")?.ToString());
+Console.WriteLine(telegram.GetByObisID(OBISRegistry.EnergyDeliveredTariff1.Id)?.ToString());
+Console.WriteLine(telegram.GetByDescriptor(OBISRegistry.EnergyDeliveredTariff1)?.ToString());
+
+// Timestamped value
+Console.WriteLine(telegram.GasDelivered.DateTime);
+Console.WriteLine(telegram.GasDelivered.Value.Value);
+Console.WriteLine(telegram.GasDelivered.Value.Unit);
+Console.WriteLine(telegram.GasDelivered.Value.Unit.ToUnitString());
+Console.WriteLine(telegram.GasDelivered.ToString());
 ```
 
 Output:
 
 ```cmd
-230.1V
-230.1
-V
+123456.789kWh
+123456,789
+kWh
+123456.789*kWh
+123456.789*kWh
+123456.789*kWh
+11-12-2020 10:09:08 +01:00
+12321,232
+m3
+m³
+2020-12-11T10:09:08.0000000+01:00: 12321.232m³
 ```
 
 ## API

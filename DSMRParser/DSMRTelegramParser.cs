@@ -13,17 +13,19 @@ namespace DSMRParser;
 /// Initializes a new instance of a <see cref="DSMRTelegramParser"/> with a given <see cref="ICRCVerifier"/>.
 /// </summary>
 /// <remarks>
-/// More information can be found here: https://www.netbeheernederland.nl/_upload/Files/Slimme_meter_15_a727fce1f1.pdf
+/// More information can be found <see href="http://riii.me/p1-5_0_2">here</see> (<see href="hhttp://riii.me/p1-5_0_2-backup">archived</see>)
+/// or <see href="https://www.netbeheernederland.nl/veiligheid-en-infrastructuur/slimme-meter">here</see> (in Dutch).
 /// </remarks>
 /// <remarks>
-/// The <see cref="DSMRTelegramParser"/> can be used to parse DSM Telegrams in raw byte form or in ASCII string form
+/// The <see cref="DSMRTelegramParser"/> can be used to parse DSM Telegrams in raw byte form or in string form
 /// into <see cref="Telegram"/> objects
 /// </remarks>
 /// <param name="crcVerifier">The <see cref="ICRCVerifier"/> to use for verifying CRC's.</param>
 /// <param name="fixMangledTelegrams">Wether to (try to) fix 'mangled' telegrams (telegrams that don't adhere to the spec)</param>
 /// <param name="timeZone">Timezone to use when parsing date/time data for a <see cref="Telegram"/>. When null, "W. Europe Standard Time" is used.</param>
+/// <param name="encoding">Encoding to use when parsing telegrams. Default is ASCII.</param>
 /// <exception cref="ArgumentNullException">Thrown when the <paramref name="crcVerifier"/> is null.</exception>
-public class DSMRTelegramParser(ICRCVerifier crcVerifier, bool fixMangledTelegrams = DSMRTelegramParser._defaultfixmangled, TimeZoneInfo? timeZone = null) : IDSMRTelegramParser
+public class DSMRTelegramParser(ICRCVerifier crcVerifier, bool fixMangledTelegrams = DSMRTelegramParser._defaultfixmangled, TimeZoneInfo? timeZone = null, Encoding? encoding = null) : IDSMRTelegramParser
 {
     private readonly ICRCVerifier _crc = crcVerifier ?? throw new ArgumentNullException(nameof(crcVerifier));
     private readonly TimeZoneInfo _timezone = timeZone ?? TimeZoneInfo.FindSystemTimeZoneById("W. Europe Standard Time");
@@ -31,14 +33,16 @@ public class DSMRTelegramParser(ICRCVerifier crcVerifier, bool fixMangledTelegra
     private const bool _defaultignorecrc = false;
     private const bool _defaultfixmangled = false;
     private const string _lineseparator = "\r\n";
+    private readonly Encoding _encoding = encoding ?? Encoding.ASCII; // Encoding used for parsing telegrams. ASCII is the default encoding for DSMR telegrams.
 
     /// <summary>
     /// Initializes a new instance of a <see cref="DSMRTelegramParser"/> with a default <see cref="ICRCVerifier"/>.
     /// </summary>
     /// <param name="fixMangledTelegrams">Wether to (try to) fix 'mangled' telegrams (telegrams that don't adhere to the spec)</param>
     /// <param name="timeZone">Timezone to use when parsing date/time data for a <see cref="Telegram"/>. When null, "W. Europe Standard Time" is used.</param>
-    public DSMRTelegramParser(bool fixMangledTelegrams = _defaultfixmangled, TimeZoneInfo? timeZone = null)
-        : this(ICRCVerifier.Default, fixMangledTelegrams, timeZone) { }
+    /// <param name="encoding">Encoding to use when parsing telegrams. Default is ASCII.</param>
+    public DSMRTelegramParser(bool fixMangledTelegrams = _defaultfixmangled, TimeZoneInfo? timeZone = null, Encoding? encoding = null)
+        : this(ICRCVerifier.Default, fixMangledTelegrams, timeZone, encoding) { }
 
     /// <summary>
     /// Parses a DSMR telegram in raw byte form into a <see cref="Telegram"/>.
@@ -65,25 +69,25 @@ public class DSMRTelegramParser(ICRCVerifier crcVerifier, bool fixMangledTelegra
     }
 
     /// <summary>
-    /// Parses a DSMR telegram in ASCII string form into a <see cref="Telegram"/>.
+    /// Parses a DSMR telegram in string form into a <see cref="Telegram"/>.
     /// </summary>
-    /// <param name="telegram">The DSMR telegram in ASCII string form.</param>
+    /// <param name="telegram">The DSMR telegram in string form.</param>
     /// <returns>A <see cref="Telegram"/> that represents the given <paramref name="telegram"/>.</returns>
     /// <exception cref="TelegramFormatException">Thrown when the given <paramref name="telegram"/> is in an invalid format.</exception>
     /// <exception cref="NullReferenceException">Thrown when the parsed <see cref="Telegram"/> resulted in a null value.</exception>
     public Telegram Parse(string telegram)
-        => Parse(Encoding.ASCII.GetBytes(telegram), _defaultignorecrc);
+        => Parse(_encoding.GetBytes(telegram), _defaultignorecrc);
 
     /// <summary>
-    /// Parses a DSMR telegram in ASCII string form into a <see cref="Telegram"/>.
+    /// Parses a DSMR telegram in string form into a <see cref="Telegram"/>.
     /// </summary>
-    /// <param name="telegram">The DSMR telegram in ASCII string form.</param>
+    /// <param name="telegram">The DSMR telegram in string form.</param>
     /// <param name="ignoreCrc">Ignore CRC errors</param>
     /// <returns>A <see cref="Telegram"/> that represents the given <paramref name="telegram"/>.</returns>
     /// <exception cref="TelegramFormatException">Thrown when the given <paramref name="telegram"/> is in an invalid format.</exception>
     /// <exception cref="NullReferenceException">Thrown when the parsed <see cref="Telegram"/> resulted in a null value.</exception>
     public Telegram Parse(string telegram, bool ignoreCrc = _defaultignorecrc)
-        => Parse(Encoding.ASCII.GetBytes(telegram), ignoreCrc);
+        => Parse(_encoding.GetBytes(telegram), ignoreCrc);
 
     /// <summary>
     /// Attempts to parse a DSMR telegram in raw byte form into a <see cref="Telegram"/>.
@@ -111,21 +115,21 @@ public class DSMRTelegramParser(ICRCVerifier crcVerifier, bool fixMangledTelegra
         => TryParseCore(telegram, ignoreCrc, out result) is null;
 
     /// <summary>
-    /// Attempts to parse a DSMR telegram in ASCII string form into a <see cref="Telegram"/>.
+    /// Attempts to parse a DSMR telegram in string form into a <see cref="Telegram"/>.
     /// </summary>
-    /// <param name="telegram">The DSMR telegram in ASCII string form.</param>
+    /// <param name="telegram">The DSMR telegram in string form.</param>
     /// <param name="result">
     /// A <see cref="Telegram"/> that represents the given <paramref name="telegram"/>. If the method returns true,
     /// <paramref name="result"/> contains a valid <see cref="Telegram"/> or null when the method returns false.
     /// </param>
     /// <returns>True if the parse operation was successful; otherwise, false.</returns>
     public bool TryParse(string telegram, [NotNullWhen(true)] out Telegram? result)
-        => TryParse(Encoding.ASCII.GetBytes(telegram), _defaultignorecrc, out result);
+        => TryParse(_encoding.GetBytes(telegram), _defaultignorecrc, out result);
 
     /// <summary>
-    /// Attempts to parse a DSMR telegram in ASCII string form into a <see cref="Telegram"/>.
+    /// Attempts to parse a DSMR telegram in string form into a <see cref="Telegram"/>.
     /// </summary>
-    /// <param name="telegram">The DSMR telegram in ASCII string form.</param>
+    /// <param name="telegram">The DSMR telegram in string form.</param>
     /// <param name="ignoreCrc">Ignore CRC errors</param>
     /// <param name="result">
     /// A <see cref="Telegram"/> that represents the given <paramref name="telegram"/>. If the method returns true,
@@ -133,7 +137,7 @@ public class DSMRTelegramParser(ICRCVerifier crcVerifier, bool fixMangledTelegra
     /// </param>
     /// <returns>True if the parse operation was successful; otherwise, false.</returns>
     public bool TryParse(string telegram, bool ignoreCrc, [NotNullWhen(true)] out Telegram? result)
-        => TryParse(Encoding.ASCII.GetBytes(telegram), ignoreCrc, out result);
+        => TryParse(_encoding.GetBytes(telegram), ignoreCrc, out result);
 
     /// <summary>
     /// Attempts to parse a DSMR telegram in raw byte form into a <see cref="Telegram"/>.
@@ -145,7 +149,7 @@ public class DSMRTelegramParser(ICRCVerifier crcVerifier, bool fixMangledTelegra
     /// <paramref name="result"/> contains a valid <see cref="Telegram"/> or null when the method returns an exception.
     /// </param>
     /// <returns>An exception indicating a reason for the failure to parse the telegram or null when successful.</returns>
-    protected virtual Exception? TryParseCore(Span<byte> telegram, bool ignoreCrc, [NotNullWhen(true)] out Telegram? result)
+    private Exception? TryParseCore(Span<byte> telegram, bool ignoreCrc, [NotNullWhen(true)] out Telegram? result)
     {
         // Initialize result
         result = null;
@@ -154,7 +158,7 @@ public class DSMRTelegramParser(ICRCVerifier crcVerifier, bool fixMangledTelegra
         if (telegram.Length > 0 && telegram[0] == (byte)'/')
         {
             // Get individual lines
-            var lines = Encoding.ASCII.GetString(telegram).Split(_lineseparator, StringSplitOptions.RemoveEmptyEntries);
+            var lines = _encoding.GetString(telegram).Split(_lineseparator, StringSplitOptions.RemoveEmptyEntries);
 
             // Do we have a CRC, then check it unless ignored specifically
             if (!ignoreCrc && lines[^1][0] == '!' && lines[^1].Length > 1)

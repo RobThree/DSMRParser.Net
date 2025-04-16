@@ -1,6 +1,7 @@
 using DSMRParser.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -242,5 +243,22 @@ public class TelegramParserTests
         Assert.AreEqual(new DateTimeOffset(2020, 12, 11, 10, 9, 5, TimeSpan.FromHours(1)), telegram.SlaveDelivered!.DateTime);
         Assert.AreEqual(11223.322m, telegram.SlaveDelivered!.Value!.Value);
         Assert.AreEqual(OBISUnit.kWh, telegram.SlaveDelivered!.Value!.Unit);
+
+
+        Debug.WriteLine(telegram.EnergyDeliveredTariff1.ToString());
+        Debug.WriteLine(telegram.EnergyDeliveredTariff1.Value);
+        Debug.WriteLine(telegram.EnergyDeliveredTariff1.Unit);
+
+        // Get original, raw string
+        Debug.WriteLine(telegram.GetByObisID("1-0:1.8.1")?.ToString());
+        Debug.WriteLine(telegram.GetByObisID(OBISRegistry.EnergyDeliveredTariff1.Id)?.ToString());
+        Debug.WriteLine(telegram.GetByDescriptor(OBISRegistry.EnergyDeliveredTariff1)?.ToString());
+
+        // Timestamped value
+        Debug.WriteLine(telegram.GasDelivered.DateTime);
+        Debug.WriteLine(telegram.GasDelivered.Value.Value);
+        Debug.WriteLine(telegram.GasDelivered.Value.Unit);
+        Debug.WriteLine(telegram.GasDelivered.Value.Unit.ToUnitString());
+        Debug.WriteLine(telegram.GasDelivered.ToString());
     }
 }
