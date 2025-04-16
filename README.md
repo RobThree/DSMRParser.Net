@@ -76,6 +76,6 @@ var value = telegram.GetByObisID(OBISId.FromString("1-0:31.7.0"));
 
 This library is locale aware (you can set a timezone for the [`DSMRTelegramParser`](DSMRParser/DSMRTelegramParser.cs) in it's constructor. All [`UnitValue<T>`](DSMRParser/Models/UnitValue.cs) values have `.ToString(...)` overrides that allow you to specify an `IFormatProvider` and `format`.
 
-### CRC's
+### CRCs
 
 The library will automatically check the CRC of the telegram. If you want to ignore the CRC, you can set the `ignoreCrc` parameter to `true` in the `Parse` and `TryParse` methods. The library will still parse the telegram, but it will not check the CRC. This is useful for testing or if you are sure that the telegram is valid. You can also provide the `DSMRTelegramParser` with a custom [`ICRCVerifier`](DSMRParser/CRCHandling/ICRCVerifier.cs) implementation if you want to use a different CRC algorithm. This library provides a default [`CRC16Verifier`](DSMRParser/CRCHandling/CRC16Verifier.cs) implementation that uses the CRC16 algorithm.
